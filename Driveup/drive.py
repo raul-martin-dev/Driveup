@@ -1,32 +1,15 @@
-from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
-import re
+from .features.auth import Auth
 import os
+import re
 
 class Drive:
     def __init__(self,client_secret_path=None,credentials_path=None):
         self.client_secret_path = client_secret_path
-        self.credentials_path = credentials_path
-        self.gauth = self.authorize(client_secret_path,credentials_path)
+        self.gauth,self.credentials_path = Auth.authorize(client_secret_path,credentials_path)
         self.drive = GoogleDrive(self.gauth)
-
-    def authorize(self,secret,credentials_path):
-        if credentials_path == None:
-            secret_path = 'credentials.json'
-            if secret != None:
-                GoogleAuth.DEFAULT_SETTINGS['client_config_file'] = secret
-                secret_path = os.path.dirname(secret) + '/' + secret_path
-            gauth = GoogleAuth()
-            gauth.LocalWebserverAuth()
-            gauth.SaveCredentialsFile(secret_path)
-        else:
-            gauth = GoogleAuth()
-            gauth.LoadCredentialsFile(credentials_path)
-
-        return gauth
     
     def upload(self,file_path,folder_id,file_title=None,file_id=None,update=True,convert=False,url=True):
-        
         if url == True:
             folder_id = self.url_to_id(folder_id)
 
@@ -37,7 +20,7 @@ class Drive:
 
         if update == True:
             gfile = self.update(file_title,file_id,folder_id)
-            
+                
         if gfile == None: # Doesn't exist in the folder already or update=False
             gfile = self.drive.CreateFile({'title': file_title,'parents': [{'id': folder_id}]})
 
@@ -46,9 +29,9 @@ class Drive:
 
         if convert == True:
             supported_types = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                               'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                               'application/vnd.ms-excel',
-                               'application/vnd.openxmlformats-officedocument.presentationml.presentation']
+                              'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                              'application/vnd.ms-excel',
+                             'application/vnd.openxmlformats-officedocument.presentationml.presentation']
             if gfile['mimeType'] in supported_types:
                 gfile.Upload(param={'convert':convert}) # Upload the file with conversion. 
             else:

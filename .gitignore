@@ -1,2 +1,6 @@
 dist/
 driveup.egg-info/
+__pycache__
+tests/localTestfiles/
+.vscode
+tests/__testsDatafiles/
