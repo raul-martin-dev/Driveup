@@ -6,7 +6,7 @@ import re
 class Drive:
     def __init__(self,client_secret_path=None,credentials_path=None):
         self.client_secret_path = client_secret_path
-        self.gauth,self.credentials_path = Auth.authorize(client_secret_path,credentials_path)
+        self.gauth,self.credentials_path = Auth().authorize(client_secret_path,credentials_path)
         self.drive = GoogleDrive(self.gauth)
     
     def upload(self,file_path,folder_id,file_title=None,file_id=None,update=True,convert=False,url=True):
@@ -29,9 +29,9 @@ class Drive:
 
         if convert == True:
             supported_types = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                              'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                              'application/vnd.ms-excel',
-                             'application/vnd.openxmlformats-officedocument.presentationml.presentation']
+                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                                'application/vnd.ms-excel',
+                                'application/vnd.openxmlformats-officedocument.presentationml.presentation']
             if gfile['mimeType'] in supported_types:
                 gfile.Upload(param={'convert':convert}) # Upload the file with conversion. 
             else:
@@ -69,7 +69,7 @@ class Drive:
         
         return file_id
     
-    def upload_folder(self,local_folder_path,folder_id=None,update=True,subfolder=True,subfolder_name=None,subfolder_id=None,recursive=True,convert=False,url=True):
+    def upload_folder(self,local_folder_path,folder_id,update=True,subfolder=True,subfolder_name=None,subfolder_id=None,recursive=True,convert=False,url=True):
 
         if url == True:
             folder_id = self.url_to_id(folder_id)
