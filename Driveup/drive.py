@@ -4,7 +4,7 @@ import os
 import re
 
 class Drive:
-    def __init__(self,client_secret_path=None,credentials_path=None):
+    def __init__(self,client_secret_path,credentials_path=None):
         self.client_secret_path = client_secret_path
         self.gauth,self.credentials_path = Auth().authorize(client_secret_path,credentials_path)
         self.drive = GoogleDrive(self.gauth)

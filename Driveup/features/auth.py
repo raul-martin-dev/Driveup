@@ -2,7 +2,7 @@ from pydrive.auth import GoogleAuth
 import os
 
 class Auth:
-    def authorize(self,secret,credentials_path,save_credentials=False):
+    def authorize(self,secret,credentials_path=None,save_credentials=False):
         if credentials_path == None:
             secret_path = 'credentials.json'
             if secret != None:

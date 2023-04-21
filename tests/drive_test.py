@@ -20,6 +20,15 @@ class TestDrive(unittest.TestCase):
         drive_obj = Drive(credentials_path=CREDENTIALS_PATH,client_secret_path=CLIENT_SECRET_PATH)
         drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID)
 
+    def test_Drive_nosecret(self):
+        error_type = ''
+        try:
+            Drive(credentials_path=CREDENTIALS_PATH)
+        except Exception as e:
+            error_type = type(e).__name__
+
+        self.assertEqual(error_type,"TypeError")
+        
 if __name__ == "__main__":
     unittest.main()
     # Auth tests can't be tested simultaneously (API conflict)

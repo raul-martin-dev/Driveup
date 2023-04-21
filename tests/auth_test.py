@@ -24,6 +24,7 @@ class TestAuth(unittest.TestCase):
     def test_authorize_credentials(self):
         auth_obj = Auth()
         gauth,credentials_path = auth_obj.authorize(None,CREDENTIALS_PATH)
+        print(gauth,credentials_path)
 
         self.assertEqual(credentials_path,CREDENTIALS_PATH)
 
