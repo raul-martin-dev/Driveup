@@ -1,20 +1,9 @@
-from pydrive.auth import GoogleAuth
-import os
+from google_auth_oauthlib.flow import InstalledAppFlow
 
 class Auth:
-    def authorize(self,secret,credentials_path=None,save_credentials=False):
-        if credentials_path == None:
-            secret_path = 'credentials.json'
-            if secret != None:
-                GoogleAuth.DEFAULT_SETTINGS['client_config_file'] = secret
-                secret_path = os.path.dirname(secret) + '\\' + secret_path
-            gauth = GoogleAuth()
-            gauth.LocalWebserverAuth()
-            if save_credentials == True:
-                gauth.SaveCredentialsFile(secret_path)
-                credentials_path = secret_path
-        else:
-            gauth = GoogleAuth()
-            gauth.LoadCredentialsFile(credentials_path)
+    def authorize(self,client_secrets_file):
+        scopes = ['https://www.googleapis.com/auth/drive']
+        flow = InstalledAppFlow.from_client_secrets_file(client_secrets_file, scopes=scopes)
+        creds = flow.run_local_server(port=0)
 
-        return gauth,credentials_path
+        return creds
