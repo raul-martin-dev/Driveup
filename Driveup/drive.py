@@ -1,13 +1,12 @@
-from pydrive.drive import GoogleDrive
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaFileUpload
 from .features.auth import Auth
 import os
 import re
 
 class Drive:
-    def __init__(self,client_secret_path,credentials_path=None):
-        self.client_secret_path = client_secret_path
-        self.gauth,self.credentials_path = Auth().authorize(client_secret_path,credentials_path)
-        self.drive = GoogleDrive(self.gauth)
+    def __init__(self,client_secret_path):
+        self.creds = Auth().authorize(client_secret_path)
     
     def upload(self,file_path,folder_id,file_title=None,file_id=None,update=True,convert=False,url=True):
         if url == True:
@@ -16,32 +15,35 @@ class Drive:
         if file_title == None:
             file_title = self.get_filename(file_path)
 
-        gfile = None
+        drive_service = build('drive', 'v3', credentials=self.creds)
+
+        file_metadata = None
 
         if update == True:
-            gfile = self.update(file_title,file_id,folder_id)
+            file_metadata = self.update(file_title,file_id,folder_id)
                 
-        if gfile == None: # Doesn't exist in the folder already or update=False
-            gfile = self.drive.CreateFile({'title': file_title,'parents': [{'id': folder_id}]})
+        if file_metadata == None: # Doesn't exist in the folder already or update=False
+            file_metadata = {'name': file_title,'parents': [folder_id]}
 
         # Read file and set it as the content of this instance.
-        gfile.SetContentFile(str(file_path))
+        media = MediaFileUpload(file_path, resumable=True)
+        file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
-        if convert == True:
-            supported_types = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                                'application/vnd.ms-excel',
-                                'application/vnd.openxmlformats-officedocument.presentationml.presentation']
-            if gfile['mimeType'] in supported_types:
-                gfile.Upload(param={'convert':convert}) # Upload the file with conversion. 
-            else:
-                gfile.Upload()   
-        else:
-            gfile.Upload() # Upload the file without conversion.
+        # if convert == True:
+        #     supported_types = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        #                         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        #                         'application/vnd.ms-excel',
+        #                         'application/vnd.openxmlformats-officedocument.presentationml.presentation']
+        #     if gfile['mimeType'] in supported_types:
+        #         gfile.Upload(param={'convert':convert}) # Upload the file with conversion. 
+        #     else:
+        #         gfile.Upload()   
+        # else:
+        #     gfile.Upload() # Upload the file without conversion.
 
     def update(self,name,file_id,folder_id):
         if file_id != None: # use specified id
-                file = self.drive.CreateFile({'id':file_id,'title': name,'parents': [{'id': folder_id}]}) # Change name: doesn't work
+                file_metadata = {'id':file_id,'name': name,'parents': [folder_id]} # Change name: doesn't work
         else: # obtain id for duplicated file (file with same name) and overwrite
             file_id = self.find_duplicate(self.list_files(folder_id),name)
             if file_id != None: # duplicate found
@@ -49,7 +51,7 @@ class Drive:
             else: # duplicate not found
                 file = None
 
-        return file
+        return file_metadata
             
     def get_filename(self,path):
         name = os.path.basename(path)
