@@ -19,15 +19,23 @@ class Drive:
 
         file_metadata = None
 
+        media = MediaFileUpload(file_path, resumable=True)
+
+        # possible refactor
         if update == True:
-            file_metadata = self.update(file_title,file_id,folder_id)
+            file_metadata = self.update(file_title,file_id,folder_id,drive_service)
                 
         if file_metadata == None: # Doesn't exist in the folder already or update=False
             file_metadata = {'name': file_title,'parents': [folder_id]}
+            gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id')
+        else:
+            file_id = file_metadata['id']
+            new_folder_id = file_metadata['parents']
+            void_metadata = {}
+            gfile = drive_service.files().update(fileId=file_id,addParents=new_folder_id[0],removeParents=folder_id, body=void_metadata, media_body=media)
 
         # Read file and set it as the content of this instance.
-        media = MediaFileUpload(file_path, resumable=True)
-        file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+        
 
         # if convert == True:
         #     supported_types = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -40,16 +48,18 @@ class Drive:
         #         gfile.Upload()   
         # else:
         #     gfile.Upload() # Upload the file without conversion.
+        gfile.execute()
 
-    def update(self,name,file_id,folder_id):
+    def update(self,name,file_id,folder_id,service):
         if file_id != None: # use specified id
                 file_metadata = {'id':file_id,'name': name,'parents': [folder_id]} # Change name: doesn't work
         else: # obtain id for duplicated file (file with same name) and overwrite
-            file_id = self.find_duplicate(self.list_files(folder_id),name)
+            file_id = self.find_duplicate(self.list_files(folder_id,service),name)
+            print("FILEID: ",file_id)
             if file_id != None: # duplicate found
-                file = self.drive.CreateFile({'id':file_id,'title': name,'parents': [{'id': folder_id}]})
+                file_metadata = {'id':file_id,'name': name,'parents': [folder_id]}
             else: # duplicate not found
-                file = None
+                file_metadata = None
 
         return file_metadata
             
@@ -59,14 +69,16 @@ class Drive:
 
         return name
     
-    def list_files(self,folder_id):
-        file_list = self.drive.ListFile({'q': f"'{folder_id}' in parents and trashed=false"}).GetList()
-        return file_list
+    def list_files(self,folder_id,service):
+        results = service.files().list(q=f"'{folder_id}' in parents and trashed = false", fields="nextPageToken, files(id, name)").execute()  
+        files = results.get('files', [])
+        
+        return files
 
     def find_duplicate(self,list,name):
         file_id = None
         for file in list:
-            if file['title'] == name:
+            if file['name'] == name:
                 file_id = file['id']
         
         return file_id
