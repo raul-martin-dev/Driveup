@@ -5,17 +5,22 @@ import os
 import re
 
 class Drive:
-    def __init__(self,client_secret_path):
-        self.creds = Auth().authorize(client_secret_path)
+    def __init__(self,client_secret_path,service=False):
+        self.creds,self.creds_type = Auth().authorize(client_secret_path,service)
     
-    def upload(self,file_path,folder_id,file_title=None,file_id=None,update=True,convert=False,url=True):
+    def upload(self,file_path,folder_id,file_title=None,file_id=None,update=True,convert=False,url=True,mode=None):
+
+        creds = creds
+        if mode == None:
+            mode = self.creds_type
+
         if url == True:
             folder_id = self.url_to_id(folder_id)
 
         if file_title == None:
             file_title = self.get_filename(file_path)
 
-        drive_service = build('drive', 'v3', credentials=self.creds)
+        drive_service = build('drive', 'v3', credentials=creds)
 
         file_metadata = None
 
@@ -30,9 +35,8 @@ class Drive:
             gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id')
         else:
             file_id = file_metadata['id']
-            new_folder_id = file_metadata['parents']
             void_metadata = {}
-            gfile = drive_service.files().update(fileId=file_id,addParents=new_folder_id[0],removeParents=folder_id, body=void_metadata, media_body=media)
+            gfile = drive_service.files().update(fileId=file_id, body=void_metadata, media_body=media)
 
         # Read file and set it as the content of this instance.
         
@@ -55,7 +59,6 @@ class Drive:
                 file_metadata = {'id':file_id,'name': name,'parents': [folder_id]} # Change name: doesn't work
         else: # obtain id for duplicated file (file with same name) and overwrite
             file_id = self.find_duplicate(self.list_files(folder_id,service),name)
-            print("FILEID: ",file_id)
             if file_id != None: # duplicate found
                 file_metadata = {'id':file_id,'name': name,'parents': [folder_id]}
             else: # duplicate not found
