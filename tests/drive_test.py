@@ -7,6 +7,7 @@ tests_dir = os.path.dirname(os.path.abspath(__file__)) # Driveup/tests/
 
 CREDENTIALS_PATH = os.path.join(tests_dir,"__testsDataFiles","auth_testFiles","credentials.json")
 CLIENT_SECRET_PATH = os.path.join(tests_dir,"__testsDataFiles","auth_testFiles","client_secrets.json")
+SERVICE_SECRET_PATH = os.path.join(tests_dir,"__testsDataFiles","auth_testFiles","service_account_key.json")
 UPLOAD_FILE_PATH_1 = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles","test_file.csv")
 UPLOAD_FILE_PATH_2 = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles","test_file_test.csv")
 UPLOAD_FOLDER_PATH = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles","test_folder")
@@ -14,12 +15,16 @@ DRIVE_FOLDER_ID = 'https://drive.google.com/drive/folders/1wXpG03SN0RXI7y1QAd03I
 
 class TestDrive(unittest.TestCase):
     def test_upload(self):
-        drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH)
+        drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH,service=False)
         drive_obj.upload(UPLOAD_FILE_PATH_2,DRIVE_FOLDER_ID)
 
     def test_upload_existing(self):
-        drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH)
+        drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH,service=False)
         drive_obj.upload(UPLOAD_FILE_PATH_1,DRIVE_FOLDER_ID)
+
+    def test_upload_service(self):
+        drive_obj = Drive(client_secret_path=SERVICE_SECRET_PATH,service=True)
+        drive_obj.upload(UPLOAD_FILE_PATH_2,DRIVE_FOLDER_ID)
 
     # def test_upload_folder(self):
     #     drive_obj = Drive(credentials_path=CREDENTIALS_PATH,client_secret_path=CLIENT_SECRET_PATH)

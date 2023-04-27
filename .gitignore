@@ -5,3 +5,4 @@ tests/localTestfiles/
 .vscode
 tests/__testsDatafiles/auth_testFiles/credentials.json
 tests/__testsDatafiles/auth_testFiles/client_secrets.json
+tests/__testsDatafiles/auth_testFiles/service_account_key.json
