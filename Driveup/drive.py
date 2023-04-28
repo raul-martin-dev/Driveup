@@ -1,18 +1,13 @@
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from .features.auth import Auth
 import os
 import re
 
 class Drive:
-    def __init__(self,client_secret_path,service=False):
-        self.creds,self.creds_type = Auth().authorize(client_secret_path,service)
+    def __init__(self,creds):
+        self.service = build('drive', 'v3', credentials=creds)
     
-    def upload(self,file_path,folder_id,file_title=None,file_id=None,update=True,convert=False,url=True,mode=None):
-
-        creds = creds
-        if mode == None:
-            mode = self.creds_type
+    def upload(self,file_path,folder_id,file_title=None,file_id=None,update=True,convert=False,url=True):
 
         if url == True:
             folder_id = self.url_to_id(folder_id)
@@ -20,7 +15,7 @@ class Drive:
         if file_title == None:
             file_title = self.get_filename(file_path)
 
-        drive_service = build('drive', 'v3', credentials=creds)
+        drive_service = self.service
 
         file_metadata = None
 
@@ -28,7 +23,7 @@ class Drive:
 
         # possible refactor
         if update == True:
-            file_metadata = self.update(file_title,file_id,folder_id,drive_service)
+            file_metadata = self.get_update(file_title,file_id,folder_id,drive_service)
                 
         if file_metadata == None: # Doesn't exist in the folder already or update=False
             file_metadata = {'name': file_title,'parents': [folder_id]}
@@ -54,7 +49,7 @@ class Drive:
         #     gfile.Upload() # Upload the file without conversion.
         gfile.execute()
 
-    def update(self,name,file_id,folder_id,service):
+    def get_update(self,name,file_id,folder_id,service):
         if file_id != None: # use specified id
                 file_metadata = {'id':file_id,'name': name,'parents': [folder_id]} # Change name: doesn't work
         else: # obtain id for duplicated file (file with same name) and overwrite
@@ -93,10 +88,11 @@ class Drive:
 
         files_list = os.listdir(local_folder_path)
 
-        if subfolder_name == None:
-            subfolder_name = self.get_filename(local_folder_path)
-
         if subfolder == True:
+
+            if subfolder_name == None:
+                subfolder_name = self.get_filename(local_folder_path)
+
             folder_id = self.create_subfolder(subfolder_name,subfolder_id,folder_id,update)
 
         for file in files_list:
@@ -109,7 +105,6 @@ class Drive:
                 else:
                     # not file nor dir
                     print('\nError uploading file: ' + file_path + '\n(Not file or directory)')
-                    pass
             else:
                 self.upload(file_path,folder_id,update=update)
             
@@ -118,7 +113,7 @@ class Drive:
         subfolder = None
 
         if update == True:
-            subfolder = self.update(subfolder_name,subfolder_id,parent_folder_id)
+            subfolder = self.get_update(subfolder_name,subfolder_id,parent_folder_id)
         
         subfolder_metadata = {'title': subfolder_name, 'mimeType': 'application/vnd.google-apps.folder', 'parents': [{'id': parent_folder_id}]}
 

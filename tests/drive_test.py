@@ -2,6 +2,8 @@ import unittest
 import os
 
 from Driveup.drive import Drive
+from Driveup.features.auth import authorize
+
 
 tests_dir = os.path.dirname(os.path.abspath(__file__)) # Driveup/tests/
 
@@ -15,29 +17,20 @@ DRIVE_FOLDER_ID = 'https://drive.google.com/drive/folders/1wXpG03SN0RXI7y1QAd03I
 
 class TestDrive(unittest.TestCase):
     def test_upload(self):
-        drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH,service=False)
+        creds = authorize(CLIENT_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
         drive_obj.upload(UPLOAD_FILE_PATH_2,DRIVE_FOLDER_ID)
 
     def test_upload_existing(self):
-        drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH,service=False)
+        drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH)
         drive_obj.upload(UPLOAD_FILE_PATH_1,DRIVE_FOLDER_ID)
 
-    def test_upload_service(self):
-        drive_obj = Drive(client_secret_path=SERVICE_SECRET_PATH,service=True)
-        drive_obj.upload(UPLOAD_FILE_PATH_2,DRIVE_FOLDER_ID)
-
-    # def test_upload_folder(self):
-    #     drive_obj = Drive(credentials_path=CREDENTIALS_PATH,client_secret_path=CLIENT_SECRET_PATH)
-    #     drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID)
-
-    # def test_Drive_nosecret(self):
-    #     error_type = ''
-    #     try:
-    #         Drive(credentials_path=CREDENTIALS_PATH)
-    #     except Exception as e:
-    #         error_type = type(e).__name__
-
-    #     self.assertEqual(error_type,"TypeError")
+    def test_convert(self):
+        drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH)
+        drive_obj.convert()
+        
         
 if __name__ == "__main__":
     unittest.main()
