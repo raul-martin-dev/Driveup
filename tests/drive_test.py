@@ -27,9 +27,17 @@ class TestDrive(unittest.TestCase):
         drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH)
         drive_obj.upload(UPLOAD_FILE_PATH_1,DRIVE_FOLDER_ID)
 
-    def test_convert(self):
-        drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH)
-        drive_obj.convert()
+    # def test_convert(self):
+    #     drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH)
+    #     drive_obj.convert()
+
+    def test_upload_folder(self):
+
+        creds = authorize(CLIENT_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID)
         
         
 if __name__ == "__main__":

@@ -78,7 +78,7 @@ class Drive:
         
         return file_id
     
-    def upload_folder(self,local_folder_path,folder_id,update=True,subfolder=True,subfolder_name=None,subfolder_id=None,recursive=True,convert=False,url=True):
+    def upload_folder(self,local_folder_path,folder_id,update=True,subfolder=True,subfolder_name=None,subfolder_id=None,recursive=True,convert=True,url=True):
 
         if url == True:
             folder_id = self.url_to_id(folder_id)
@@ -107,19 +107,20 @@ class Drive:
             
 
     def create_subfolder(self,subfolder_name,subfolder_id,parent_folder_id,update):
+
+        drive_service = self.service
+
         subfolder = None
 
         if update == True:
-            subfolder = self.get_update(subfolder_name,subfolder_id,parent_folder_id)
+            subfolder = self.get_update(subfolder_name,subfolder_id,parent_folder_id,drive_service)
         
-        subfolder_metadata = {'title': subfolder_name, 'mimeType': 'application/vnd.google-apps.folder', 'parents': [{'id': parent_folder_id}]}
+        subfolder_metadata = {'name': subfolder_name, 'mimeType': 'application/vnd.google-apps.folder', 'parents': [parent_folder_id]}
 
         if subfolder == None:
-            subfolder = self.drive.CreateFile(subfolder_metadata)
+            subfolder = drive_service.files().create(body=subfolder_metadata, fields='id').execute()
         else:
             subfolder['mimeType'] = subfolder_metadata['mimeType']
-            
-        subfolder.Upload()
 
         return subfolder['id']
     
@@ -134,7 +135,10 @@ class Drive:
             
     def convert(self,file_metadata,extension=None):
 
-        if extension != None:
+        if extension == 'docx':
+            file_metadata['mimeType'] = 'application/vnd.google-apps.document'
+        elif extension != None:
             file_metadata['mimeType'] = 'application/vnd.google-apps.' + extension
+
         
         return file_metadata
