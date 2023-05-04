@@ -49,6 +49,7 @@ class Drive:
         #     gfile.Upload() # Upload the file without conversion.
         gfile.execute()
 
+    # returns metadata for the file (whether it exists or not)
     def get_update(self,name,file_id,folder_id,service):
         if file_id != None: # use specified id
                 file_metadata = {'id':file_id,'name': name,'parents': [folder_id]} # Change name: doesn't work
@@ -134,3 +135,5 @@ class Drive:
             return match.group(4) # (\w+) -> Alphanumeric id
         else:
             return folder_id
+        
+    def convert(self,file_metadata):
