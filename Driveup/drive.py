@@ -27,26 +27,16 @@ class Drive:
                 
         if file_metadata == None: # Doesn't exist in the folder already or update=False
             file_metadata = {'name': file_title,'parents': [folder_id]}
+
+            if convert == True:
+                file_metadata = self.convert(file_metadata,self.get_file_extension(file_path))
+
             gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id')
         else:
             file_id = file_metadata['id']
             void_metadata = {}
             gfile = drive_service.files().update(fileId=file_id, body=void_metadata, media_body=media)
 
-        # Read file and set it as the content of this instance.
-        
-
-        # if convert == True:
-        #     supported_types = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        #                         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        #                         'application/vnd.ms-excel',
-        #                         'application/vnd.openxmlformats-officedocument.presentationml.presentation']
-        #     if gfile['mimeType'] in supported_types:
-        #         gfile.Upload(param={'convert':convert}) # Upload the file with conversion. 
-        #     else:
-        #         gfile.Upload()   
-        # else:
-        #     gfile.Upload() # Upload the file without conversion.
         gfile.execute()
 
     # returns metadata for the file (whether it exists or not)
@@ -67,6 +57,12 @@ class Drive:
         name = os.path.splitext(name)[0]
 
         return name
+    
+    def get_file_extension(self,path):
+        name = os.path.basename(path)
+        extension = os.path.splitext(name)[1]
+
+        return extension
     
     def list_files(self,folder_id,service):
         results = service.files().list(q=f"'{folder_id}' in parents and trashed = false", fields="nextPageToken, files(id, name)").execute()  
@@ -135,5 +131,10 @@ class Drive:
             return match.group(4) # (\w+) -> Alphanumeric id
         else:
             return folder_id
+            
+    def convert(self,file_metadata,extension=None):
 
-
+        if extension != None:
+            file_metadata['mimeType'] = 'application/vnd.google-apps.' + extension
+        
+        return file_metadata
