@@ -142,6 +142,7 @@ class Drive:
                                        'xlsx',
                                        'xls',
                                        'xlsm',
+                                       'fods',
                                        'pptx',
                                        'odt']
         
