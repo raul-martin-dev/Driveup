@@ -141,12 +141,17 @@ class Drive:
                                        'csv',
                                        'xlsx',
                                        'xls',
-                                       'pptx']
+                                       'pptx',
+                                       'odt']
         
         if extension == 'docx':
             file_metadata['mimeType'] = 'application/vnd.google-apps.document'
         elif extension == 'rtf':
             file_metadata['mimeType'] = 'application/vnd.google-apps.document'
+        elif extension == 'md':
+            file_metadata['mimeType'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        elif extension == 'odf':
+            file_metadata['mimeType'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         elif extension in permited_general_extensions :
             file_metadata['mimeType'] = 'application/vnd.google-apps.' + extension
         else:
