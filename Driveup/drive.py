@@ -62,6 +62,7 @@ class Drive:
         name = os.path.basename(path)
         extension = os.path.splitext(name)[1]
         extension = extension.lower()
+        extension = extension.replace(".", "")
 
         return extension
     
@@ -136,23 +137,18 @@ class Drive:
             
     def convert(self,file_metadata,extension=None):
         permited_general_extensions = ['txt',
+                                       'doc',
                                        'csv',
                                        'xlsx',
                                        'xls',
-                                       'pptx',
-                                       'ppt']
+                                       'pptx']
         
         if extension == 'docx':
             file_metadata['mimeType'] = 'application/vnd.google-apps.document'
         elif extension == 'rtf':
             file_metadata['mimeType'] = 'application/vnd.google-apps.document'
-        elif extension == 'png':
-            file_metadata['mimeType'] = 'application/vnd.google-apps.photo'
         elif extension in permited_general_extensions :
             file_metadata['mimeType'] = 'application/vnd.google-apps.' + extension
-        # # try to find new general exception by try and error
-        # elif extension != None:
-        #     file_metadata['mimeType'] = 'application/vnd.google-apps.' + extension
         else:
             file_metadata = file_metadata
 
