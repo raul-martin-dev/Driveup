@@ -144,6 +144,8 @@ class Drive:
         
         if extension == 'docx':
             file_metadata['mimeType'] = 'application/vnd.google-apps.document'
+        elif extension == 'rtf':
+            file_metadata['mimeType'] = 'application/vnd.google-apps.document'
         elif extension == 'png':
             file_metadata['mimeType'] = 'application/vnd.google-apps.photo'
         elif extension in permited_general_extensions :
