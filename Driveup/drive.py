@@ -139,7 +139,8 @@ class Drive:
                                        'csv',
                                        'xlsx',
                                        'xls',
-                                       'pptx',]
+                                       'pptx',
+                                       'ppt']
         
         if extension == 'docx':
             file_metadata['mimeType'] = 'application/vnd.google-apps.document'
