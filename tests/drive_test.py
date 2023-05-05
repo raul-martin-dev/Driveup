@@ -38,6 +38,14 @@ class TestDrive(unittest.TestCase):
         drive_obj = Drive(creds)
 
         drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID)
+    
+    def test_upload_folder_no_convert(self):
+
+        creds = authorize(CLIENT_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID,convert=False)
         
         
 if __name__ == "__main__":

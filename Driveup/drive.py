@@ -157,6 +157,8 @@ class Drive:
             file_metadata['mimeType'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         elif extension == 'slk':
             file_metadata['mimeType'] = 'application/vnd.google-apps.spreadsheet'
+        elif extension == 'prn':
+            file_metadata['mimeType'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         elif extension in permited_general_extensions :
             file_metadata['mimeType'] = 'application/vnd.google-apps.' + extension
         else:
