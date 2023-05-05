@@ -141,6 +141,7 @@ class Drive:
                                        'csv',
                                        'xlsx',
                                        'xls',
+                                       'xlsm',
                                        'pptx',
                                        'odt']
         
