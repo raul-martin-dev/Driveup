@@ -134,17 +134,18 @@ class Drive:
             return match.group(4) # (\w+) -> Alphanumeric id
         else:
             return folder_id
-            
+       
     def convert(self,file_metadata,extension=None):
         permited_general_extensions = ['txt',
                                        'doc',
+                                       'odt',
+                                       'docm',
                                        'csv',
                                        'xlsx',
                                        'xls',
                                        'xlsm',
                                        'fods',
-                                       'pptx',
-                                       'odt']
+                                       'pptx']
         
         if extension == 'docx':
             file_metadata['mimeType'] = 'application/vnd.google-apps.document'
@@ -154,6 +155,8 @@ class Drive:
             file_metadata['mimeType'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         elif extension == 'odf':
             file_metadata['mimeType'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        elif extension == 'slk':
+            file_metadata['mimeType'] = 'application/vnd.google-apps.spreadsheet'
         elif extension in permited_general_extensions :
             file_metadata['mimeType'] = 'application/vnd.google-apps.' + extension
         else:

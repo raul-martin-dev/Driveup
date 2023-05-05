@@ -79,8 +79,8 @@
    <config:config-item config:name="IsRasterAxisSynchronized" config:type="boolean">true</config:config-item>
    <config:config-item config:name="AutoCalculate" config:type="boolean">true</config:config-item>
    <config:config-item config:name="ApplyUserData" config:type="boolean">true</config:config-item>
-   <config:config-item config:name="PrinterName" config:type="string"/>
-   <config:config-item config:name="PrinterSetup" config:type="base64Binary"/>
+   <config:config-item config:name="PrinterName" config:type="string">Microsoft Print to PDF</config:config-item>
+   <config:config-item config:name="PrinterSetup" config:type="base64Binary">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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEgBDT01QQVRfRFVQTEVYX01PREUTAER1cGxleE1vZGU6OlVua25vd24=</config:config-item>
    <config:config-item config:name="PrinterPaperFromSetup" config:type="boolean">false</config:config-item>
    <config:config-item config:name="SaveThumbnail" config:type="boolean">true</config:config-item>
    <config:config-item config:name="CharacterCompressionType" config:type="short">0</config:config-item>
@@ -115,85 +115,71 @@
   <number:number-style style:name="N0">
    <number:number number:min-integer-digits="1"/>
   </number:number-style>
-  <number:number-style style:name="N104P0" style:volatile="true">
-   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
-   <number:text> €</number:text>
-  </number:number-style>
-  <number:number-style style:name="N104">
-   <number:text>-</number:text>
-   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
-   <number:text> €</number:text>
-   <style:map style:condition="value()&gt;=0" style:apply-style-name="N104P0"/>
-  </number:number-style>
   <number:number-style style:name="N105P0" style:volatile="true">
    <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
    <number:text> €</number:text>
   </number:number-style>
   <number:number-style style:name="N105">
-   <style:text-properties fo:color="#ff0000"/>
    <number:text>-</number:text>
    <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
    <number:text> €</number:text>
    <style:map style:condition="value()&gt;=0" style:apply-style-name="N105P0"/>
   </number:number-style>
   <number:number-style style:name="N106P0" style:volatile="true">
-   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
    <number:text> €</number:text>
   </number:number-style>
   <number:number-style style:name="N106">
+   <style:text-properties fo:color="#ff0000"/>
    <number:text>-</number:text>
-   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
    <number:text> €</number:text>
    <style:map style:condition="value()&gt;=0" style:apply-style-name="N106P0"/>
   </number:number-style>
-  <number:number-style style:name="N107P0" style:volatile="true">
+  <number:number-style style:name="N108P0" style:volatile="true">
    <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
    <number:text> €</number:text>
   </number:number-style>
-  <number:number-style style:name="N107">
+  <number:number-style style:name="N108">
+   <number:text>-</number:text>
+   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+   <number:text> €</number:text>
+   <style:map style:condition="value()&gt;=0" style:apply-style-name="N108P0"/>
+  </number:number-style>
+  <number:number-style style:name="N109P0" style:volatile="true">
+   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+   <number:text> €</number:text>
+  </number:number-style>
+  <number:number-style style:name="N109">
    <style:text-properties fo:color="#ff0000"/>
    <number:text>-</number:text>
    <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
    <number:text> €</number:text>
-   <style:map style:condition="value()&gt;=0" style:apply-style-name="N107P0"/>
+   <style:map style:condition="value()&gt;=0" style:apply-style-name="N109P0"/>
   </number:number-style>
-  <number:date-style style:name="N108">
-   <number:day number:style="long"/>
-   <number:text>-</number:text>
-   <number:month number:textual="true"/>
-   <number:text>-</number:text>
-   <number:year/>
-  </number:date-style>
-  <number:date-style style:name="N109">
-   <number:day number:style="long"/>
-   <number:text>-</number:text>
-   <number:month number:textual="true"/>
-  </number:date-style>
   <number:date-style style:name="N110">
+   <number:day number:style="long"/>
+   <number:text>-</number:text>
    <number:month number:textual="true"/>
    <number:text>-</number:text>
    <number:year/>
   </number:date-style>
-  <number:time-style style:name="N111">
-   <number:hours/>
-   <number:text>:</number:text>
-   <number:minutes number:style="long"/>
-   <number:text> </number:text>
-   <number:am-pm/>
-  </number:time-style>
-  <number:time-style style:name="N112">
-   <number:hours/>
-   <number:text>:</number:text>
-   <number:minutes number:style="long"/>
-   <number:text>:</number:text>
-   <number:seconds number:style="long"/>
-   <number:text> </number:text>
-   <number:am-pm/>
-  </number:time-style>
+  <number:date-style style:name="N111">
+   <number:day number:style="long"/>
+   <number:text>-</number:text>
+   <number:month number:textual="true"/>
+  </number:date-style>
+  <number:date-style style:name="N112">
+   <number:month number:textual="true"/>
+   <number:text>-</number:text>
+   <number:year/>
+  </number:date-style>
   <number:time-style style:name="N113">
    <number:hours/>
    <number:text>:</number:text>
    <number:minutes number:style="long"/>
+   <number:text> </number:text>
+   <number:am-pm/>
   </number:time-style>
   <number:time-style style:name="N114">
    <number:hours/>
@@ -201,8 +187,22 @@
    <number:minutes number:style="long"/>
    <number:text>:</number:text>
    <number:seconds number:style="long"/>
+   <number:text> </number:text>
+   <number:am-pm/>
   </number:time-style>
-  <number:date-style style:name="N115">
+  <number:time-style style:name="N115">
+   <number:hours/>
+   <number:text>:</number:text>
+   <number:minutes number:style="long"/>
+  </number:time-style>
+  <number:time-style style:name="N116">
+   <number:hours/>
+   <number:text>:</number:text>
+   <number:minutes number:style="long"/>
+   <number:text>:</number:text>
+   <number:seconds number:style="long"/>
+  </number:time-style>
+  <number:date-style style:name="N117">
    <number:day number:style="long"/>
    <number:text>/</number:text>
    <number:month number:style="long"/>
@@ -213,170 +213,170 @@
    <number:text>:</number:text>
    <number:minutes number:style="long"/>
   </number:date-style>
-  <number:number-style style:name="N116P0" style:volatile="true">
-   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
-   <number:text>   </number:text>
-  </number:number-style>
-  <number:number-style style:name="N116">
-   <number:text>-</number:text>
-   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
-   <number:text>   </number:text>
-   <style:map style:condition="value()&gt;=0" style:apply-style-name="N116P0"/>
-  </number:number-style>
-  <number:number-style style:name="N117P0" style:volatile="true">
-   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
-   <number:text>   </number:text>
-  </number:number-style>
-  <number:number-style style:name="N117">
-   <style:text-properties fo:color="#ff0000"/>
-   <number:text>-</number:text>
-   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
-   <number:text>   </number:text>
-   <style:map style:condition="value()&gt;=0" style:apply-style-name="N117P0"/>
-  </number:number-style>
-  <number:number-style style:name="N118P0" style:volatile="true">
-   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
-   <number:text>   </number:text>
-  </number:number-style>
-  <number:number-style style:name="N118">
-   <number:text>-</number:text>
-   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
-   <number:text>   </number:text>
-   <style:map style:condition="value()&gt;=0" style:apply-style-name="N118P0"/>
-  </number:number-style>
   <number:number-style style:name="N119P0" style:volatile="true">
-   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
    <number:text>   </number:text>
   </number:number-style>
   <number:number-style style:name="N119">
-   <style:text-properties fo:color="#ff0000"/>
    <number:text>-</number:text>
-   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
    <number:text>   </number:text>
    <style:map style:condition="value()&gt;=0" style:apply-style-name="N119P0"/>
   </number:number-style>
   <number:number-style style:name="N120P0" style:volatile="true">
+   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
+   <number:text>   </number:text>
+  </number:number-style>
+  <number:number-style style:name="N120">
+   <style:text-properties fo:color="#ff0000"/>
+   <number:text>-</number:text>
+   <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
+   <number:text>   </number:text>
+   <style:map style:condition="value()&gt;=0" style:apply-style-name="N120P0"/>
+  </number:number-style>
+  <number:number-style style:name="N122P0" style:volatile="true">
+   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+   <number:text>   </number:text>
+  </number:number-style>
+  <number:number-style style:name="N122">
+   <number:text>-</number:text>
+   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+   <number:text>   </number:text>
+   <style:map style:condition="value()&gt;=0" style:apply-style-name="N122P0"/>
+  </number:number-style>
+  <number:number-style style:name="N123P0" style:volatile="true">
+   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+   <number:text>   </number:text>
+  </number:number-style>
+  <number:number-style style:name="N123">
+   <style:text-properties fo:color="#ff0000"/>
+   <number:text>-</number:text>
+   <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
+   <number:text>   </number:text>
+   <style:map style:condition="value()&gt;=0" style:apply-style-name="N123P0"/>
+  </number:number-style>
+  <number:number-style style:name="N127P0" style:volatile="true">
    <number:text> </number:text>
    <number:fill-character> </number:fill-character>
    <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
    <number:text>    </number:text>
   </number:number-style>
-  <number:number-style style:name="N120P1" style:volatile="true">
+  <number:number-style style:name="N127P1" style:volatile="true">
    <number:text>-</number:text>
    <number:fill-character> </number:fill-character>
    <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
    <number:text>    </number:text>
   </number:number-style>
-  <number:number-style style:name="N120P2" style:volatile="true">
+  <number:number-style style:name="N127P2" style:volatile="true">
    <number:text> </number:text>
    <number:fill-character> </number:fill-character>
    <number:text>-    </number:text>
   </number:number-style>
-  <number:text-style style:name="N120">
+  <number:text-style style:name="N127">
    <number:text> </number:text>
    <number:text-content/>
    <number:text> </number:text>
-   <style:map style:condition="value()&gt;0" style:apply-style-name="N120P0"/>
-   <style:map style:condition="value()&lt;0" style:apply-style-name="N120P1"/>
-   <style:map style:condition="value()=0" style:apply-style-name="N120P2"/>
+   <style:map style:condition="value()&gt;0" style:apply-style-name="N127P0"/>
+   <style:map style:condition="value()&lt;0" style:apply-style-name="N127P1"/>
+   <style:map style:condition="value()=0" style:apply-style-name="N127P2"/>
   </number:text-style>
-  <number:number-style style:name="N121P0" style:volatile="true">
+  <number:number-style style:name="N131P0" style:volatile="true">
    <number:text> </number:text>
    <number:fill-character> </number:fill-character>
    <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
    <number:text> € </number:text>
   </number:number-style>
-  <number:number-style style:name="N121P1" style:volatile="true">
+  <number:number-style style:name="N131P1" style:volatile="true">
    <number:text>-</number:text>
    <number:fill-character> </number:fill-character>
    <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="1" number:grouping="true"/>
    <number:text> € </number:text>
   </number:number-style>
-  <number:number-style style:name="N121P2" style:volatile="true">
+  <number:number-style style:name="N131P2" style:volatile="true">
    <number:text> </number:text>
    <number:fill-character> </number:fill-character>
    <number:text>- € </number:text>
   </number:number-style>
-  <number:text-style style:name="N121">
+  <number:text-style style:name="N131">
    <number:text> </number:text>
    <number:text-content/>
    <number:text> </number:text>
-   <style:map style:condition="value()&gt;0" style:apply-style-name="N121P0"/>
-   <style:map style:condition="value()&lt;0" style:apply-style-name="N121P1"/>
-   <style:map style:condition="value()=0" style:apply-style-name="N121P2"/>
+   <style:map style:condition="value()&gt;0" style:apply-style-name="N131P0"/>
+   <style:map style:condition="value()&lt;0" style:apply-style-name="N131P1"/>
+   <style:map style:condition="value()=0" style:apply-style-name="N131P2"/>
   </number:text-style>
-  <number:number-style style:name="N122P0" style:volatile="true">
+  <number:number-style style:name="N135P0" style:volatile="true">
    <number:text> </number:text>
    <number:fill-character> </number:fill-character>
    <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
    <number:text>    </number:text>
   </number:number-style>
-  <number:number-style style:name="N122P1" style:volatile="true">
+  <number:number-style style:name="N135P1" style:volatile="true">
    <number:text>-</number:text>
    <number:fill-character> </number:fill-character>
    <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
    <number:text>    </number:text>
   </number:number-style>
-  <number:number-style style:name="N122P2" style:volatile="true">
+  <number:number-style style:name="N135P2" style:volatile="true">
    <number:text> </number:text>
    <number:fill-character> </number:fill-character>
    <number:text>-</number:text>
    <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="0"/>
    <number:text>    </number:text>
   </number:number-style>
-  <number:text-style style:name="N122">
+  <number:text-style style:name="N135">
    <number:text> </number:text>
    <number:text-content/>
    <number:text> </number:text>
-   <style:map style:condition="value()&gt;0" style:apply-style-name="N122P0"/>
-   <style:map style:condition="value()&lt;0" style:apply-style-name="N122P1"/>
-   <style:map style:condition="value()=0" style:apply-style-name="N122P2"/>
+   <style:map style:condition="value()&gt;0" style:apply-style-name="N135P0"/>
+   <style:map style:condition="value()&lt;0" style:apply-style-name="N135P1"/>
+   <style:map style:condition="value()=0" style:apply-style-name="N135P2"/>
   </number:text-style>
-  <number:number-style style:name="N123P0" style:volatile="true">
+  <number:number-style style:name="N139P0" style:volatile="true">
    <number:text> </number:text>
    <number:fill-character> </number:fill-character>
    <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
    <number:text> € </number:text>
   </number:number-style>
-  <number:number-style style:name="N123P1" style:volatile="true">
+  <number:number-style style:name="N139P1" style:volatile="true">
    <number:text>-</number:text>
    <number:fill-character> </number:fill-character>
    <number:number number:decimal-places="2" number:min-decimal-places="2" number:min-integer-digits="1" number:grouping="true"/>
    <number:text> € </number:text>
   </number:number-style>
-  <number:number-style style:name="N123P2" style:volatile="true">
+  <number:number-style style:name="N139P2" style:volatile="true">
    <number:text> </number:text>
    <number:fill-character> </number:fill-character>
    <number:text>-</number:text>
    <number:number number:decimal-places="0" number:min-decimal-places="0" number:min-integer-digits="0"/>
    <number:text> € </number:text>
   </number:number-style>
-  <number:text-style style:name="N123">
+  <number:text-style style:name="N139">
    <number:text> </number:text>
    <number:text-content/>
    <number:text> </number:text>
-   <style:map style:condition="value()&gt;0" style:apply-style-name="N123P0"/>
-   <style:map style:condition="value()&lt;0" style:apply-style-name="N123P1"/>
-   <style:map style:condition="value()=0" style:apply-style-name="N123P2"/>
+   <style:map style:condition="value()&gt;0" style:apply-style-name="N139P0"/>
+   <style:map style:condition="value()&lt;0" style:apply-style-name="N139P1"/>
+   <style:map style:condition="value()=0" style:apply-style-name="N139P2"/>
   </number:text-style>
-  <number:time-style style:name="N124">
+  <number:time-style style:name="N140">
    <number:minutes number:style="long"/>
    <number:text>:</number:text>
    <number:seconds number:style="long"/>
   </number:time-style>
-  <number:time-style style:name="N125" number:truncate-on-overflow="false">
+  <number:time-style style:name="N141" number:truncate-on-overflow="false">
    <number:hours/>
    <number:text>:</number:text>
    <number:minutes number:style="long"/>
    <number:text>:</number:text>
    <number:seconds number:style="long"/>
   </number:time-style>
-  <number:time-style style:name="N126">
+  <number:time-style style:name="N142">
    <number:minutes number:style="long"/>
    <number:text>:</number:text>
    <number:seconds number:style="long" number:decimal-places="1"/>
   </number:time-style>
-  <number:number-style style:name="N127">
+  <number:number-style style:name="N143">
    <number:scientific-number number:decimal-places="1" number:min-decimal-places="1" number:min-integer-digits="1" number:min-exponent-digits="1" number:exponent-interval="3" number:forced-exponent-sign="true"/>
   </number:number-style>
   <style:style style:name="Default" style:family="table-cell">
@@ -457,6 +457,9 @@
   <style:style style:name="ce1" style:family="table-cell" style:parent-style-name="Default">
    <style:table-cell-properties style:rotation-align="none"/>
   </style:style>
+  <style:style style:name="ce3" style:family="table-cell" style:parent-style-name="Default">
+   <style:table-cell-properties style:rotation-align="none"/>
+  </style:style>
   <style:page-layout style:name="pm1">
    <style:page-layout-properties style:first-page-number="continue" style:writing-mode="lr-tb"/>
    <style:header-style>
@@ -509,7 +512,7 @@
      <text:p><text:sheet-name>???</text:sheet-name><text:s/>(<text:title>???</text:title>)</text:p>
     </style:region-left>
     <style:region-right>
-     <text:p><text:date style:data-style-name="N2" text:date-value="2023-05-05">00/00/0000</text:date>, <text:time>00:00:00</text:time></text:p>
+     <text:p><text:date style:data-style-name="N2" text:date-value="2023-05-05">00/00/0000</text:date>, <text:time style:data-style-name="N2" text:time-value="14:03:53.756000000">00:00:00</text:time></text:p>
     </style:region-right>
    </style:header>
    <style:header-left style:display="false"/>
@@ -534,7 +537,7 @@
    <table:calculation-settings table:case-sensitive="false" table:automatic-find-labels="false" table:use-regular-expressions="false" table:use-wildcards="true"/>
    <table:table table:name="test_excel_4" table:style-name="ta1">
     <office:forms form:automatic-focus="false" form:apply-design-mode="false"/>
-    <table:table-column table:style-name="co1" table:number-columns-repeated="2" table:default-cell-style-name="ce1"/>
+    <table:table-column table:style-name="co1" table:number-columns-repeated="2" table:default-cell-style-name="ce3"/>
     <table:table-column table:style-name="co1" table:number-columns-repeated="62" table:default-cell-style-name="Default"/>
     <table:table-row table:style-name="ro1">
      <table:table-cell office:value-type="string" calcext:value-type="string">
