@@ -5,7 +5,8 @@ import re
 
 class Drive:
     def __init__(self,creds):
-        self.service = build('drive', 'v3', credentials=creds)
+        self.mode = creds['type']
+        self.service = build('drive', 'v3', credentials=creds['creds'])
     
     def upload(self,file_path,folder_id,file_title=None,file_id=None,update=True,convert=False,url=True):
 
