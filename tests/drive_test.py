@@ -45,7 +45,7 @@ class TestDrive(unittest.TestCase):
 
         drive_obj = Drive(creds)
 
-        drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID,convert=False)
+        drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID)
 
     def test_upload_service(self):
         creds = authorize(SERVICE_SECRET_PATH)
@@ -53,6 +53,14 @@ class TestDrive(unittest.TestCase):
         drive_obj = Drive(creds)
 
         drive_obj.upload(UPLOAD_FILE_PATH_1,DRIVE_FOLDER_ID,convert=True)
+
+    def test_upload_folder_service(self):
+
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID,convert=True)
         
         
 if __name__ == "__main__":

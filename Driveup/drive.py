@@ -98,7 +98,7 @@ class Drive:
         
         return file_id
     
-    def upload_folder(self,local_folder_path,folder_id,update=True,subfolder=True,subfolder_name=None,subfolder_id=None,recursive=True,convert=True,url=True):
+    def upload_folder(self,local_folder_path,folder_id,update=True,subfolder=True,subfolder_name=None,subfolder_id=None,recursive=True,convert=False,url=True):
 
         if url == True:
             folder_id = self.url_to_id(folder_id)
