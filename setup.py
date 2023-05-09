@@ -15,7 +15,7 @@ setup(
     author='Raúl M.R.',
     author_email="raul.martin4bc@gmail.com",
     license="MIT",
-    description='Python package for uploading files and folders to Google Drive',
+    description='Python package for uploading files and folders to Google Drive.',
     packages=find_packages(include=["Driveup","Driveup.features"]),
     install_requires=[
         'google-api-python-client',
