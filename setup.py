@@ -18,7 +18,6 @@ setup(
     description='Python package for uploading files and folders to Google Drive',
     packages=find_packages(include=["Driveup","Driveup.features"]),
     install_requires=[
-        'google-api-python-client',
         'google-auth-httplib2',
         'google-auth-oauthlib',
     ],
