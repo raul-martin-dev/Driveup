@@ -27,29 +27,46 @@ class Drive:
             file_metadata = self.get_update(file_title,file_id,folder_id,drive_service)
                 
         if file_metadata == None: # Doesn't exist in the folder already or update=False
-            file_metadata = {'name': file_title,'parents': [folder_id]}
+            if self.mode == 'client':
+                file_metadata = {'name': file_title,'parents': [folder_id]}
+            else:
+                file_metadata = {'name': file_title,'parents': folder_id}
 
             if convert == True:
                 file_metadata = self.convert(file_metadata,self.get_file_extension(file_path))
 
-            gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id')
+            gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
         else:
             file_id = file_metadata['id']
             void_metadata = {}
-            gfile = drive_service.files().update(fileId=file_id, body=void_metadata, media_body=media)
+            gfile = drive_service.files().update(fileId=file_id, body=void_metadata, media_body=media).execute()
 
-        gfile.execute()
+        if self.mode == 'service':
+                old_parents = gfile.get('parents')
+                file_id = gfile.get('id')
+
+                drive_service.files().update(fileId=file_id,removeParents=old_parents,addParents=folder_id).execute()
 
     # returns metadata for the file (whether it exists or not)
     def get_update(self,name,file_id,folder_id,service):
-        if file_id != None: # use specified id
-                file_metadata = {'id':file_id,'name': name,'parents': [folder_id]} # Change name: doesn't work
-        else: # obtain id for duplicated file (file with same name) and overwrite
-            file_id = self.find_duplicate(self.list_files(folder_id,service),name)
-            if file_id != None: # duplicate found
-                file_metadata = {'id':file_id,'name': name,'parents': [folder_id]}
-            else: # duplicate not found
-                file_metadata = None
+        if self.mode == 'client':
+            if file_id != None: # use specified id
+                    file_metadata = {'id':file_id,'name': name,'parents': [folder_id]} # Change name: doesn't work
+            else: # obtain id for duplicated file (file with same name) and overwrite
+                file_id = self.find_duplicate(self.list_files(folder_id,service),name)
+                if file_id != None: # duplicate found
+                    file_metadata = {'id':file_id,'name': name,'parents': [folder_id]}
+                else: # duplicate not found
+                    file_metadata = None
+        else:
+            if file_id != None: # use specified id
+                    file_metadata = {'id':file_id,'name': name,'parents': folder_id} # Change name: doesn't work
+            else: # obtain id for duplicated file (file with same name) and overwrite
+                file_id = self.find_duplicate(self.list_files(folder_id,service),name)
+                if file_id != None: # duplicate found
+                    file_metadata = {'id':file_id,'name': name,'parents': folder_id}
+                else: # duplicate not found
+                    file_metadata = None
 
         return file_metadata
             

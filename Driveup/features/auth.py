@@ -4,13 +4,15 @@ import json
 
 def authorize(secrets_file):
     scopes = ['https://www.googleapis.com/auth/drive']
-    creds_type = self.get_secret_type(secrets_file)
-
+    creds_type = get_secret_type(secrets_file)
     if creds_type == 'client':
         flow = InstalledAppFlow.from_client_secrets_file(secrets_file, scopes=scopes)
         secret = flow.run_local_server(port=0)
-    else:
+    elif creds_type == 'service':
         secret = Credentials.from_service_account_file(secrets_file,scopes=scopes)
+    else:
+        # ERROR: invalid JSON file (needs control)
+        pass
     
     creds_body = {
         'creds': secret,
@@ -20,7 +22,6 @@ def authorize(secrets_file):
     return creds_body
 
 def get_secret_type(path):
-
     with open(path,'r') as f:
         secret_dict = json.load(f)
 
