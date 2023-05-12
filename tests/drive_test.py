@@ -1,5 +1,6 @@
 import unittest
 import os
+import Preln.preprocessing as pln
 
 from Driveup.drive import Drive
 from Driveup.features.auth import authorize
@@ -23,13 +24,46 @@ class TestDrive(unittest.TestCase):
 
         drive_obj.upload(UPLOAD_FILE_PATH_2,DRIVE_FOLDER_ID)
 
+    def test_upload_list(self):
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        files = [UPLOAD_FILE_PATH_1,UPLOAD_FILE_PATH_2]
+
+        drive_obj.upload(files,DRIVE_FOLDER_ID)
+    
+    def test_upload_list_ids(self):
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        ids = ['1LKUzha5IqtfQi3t8fnqK09pWfonfLKc3','1BJs_eDUR0XDR82N3sxzRz4wqrueJFGQX']
+
+        files = [UPLOAD_FILE_PATH_1,UPLOAD_FILE_PATH_2]
+        # files = [UPLOAD_FILE_PATH_1]
+        # files = UPLOAD_FILE_PATH_1
+
+        drive_obj.upload(files,'1R8caV6WVxSqKDC41EhmZB5ARBcp1F-7d',file_id=ids)
+
+    def test_upload_list_folders(self):
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        # ids = ['1LKUzha5IqtfQi3t8fnqK09pWfonfLKc3','1BJs_eDUR0XDR82N3sxzRz4wqrueJFGQX']
+        files = [UPLOAD_FILE_PATH_1,UPLOAD_FILE_PATH_2]
+        folders = [DRIVE_FOLDER_ID,'1R8caV6WVxSqKDC41EhmZB5ARBcp1F-7d']
+
+        # drive_obj.upload(files,DRIVE_FOLDER_ID,file_id=ids)
+        drive_obj.upload(files,folders)
+        # drive_obj.upload(files,folders,file_id=ids)
+        # drive_obj.upload(UPLOAD_FILE_PATH_1,folders)
+
     def test_upload_existing(self):
         drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH)
         drive_obj.upload(UPLOAD_FILE_PATH_1,DRIVE_FOLDER_ID)
 
-    # def test_convert(self):
-    #     drive_obj = Drive(client_secret_path=CLIENT_SECRET_PATH)
-    #     drive_obj.convert()
 
     def test_upload_folder(self):
 
@@ -61,6 +95,7 @@ class TestDrive(unittest.TestCase):
         drive_obj = Drive(creds)
 
         drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID,convert=True)
+
         
         
 if __name__ == "__main__":
