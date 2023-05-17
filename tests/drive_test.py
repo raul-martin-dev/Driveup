@@ -1,6 +1,6 @@
 import unittest
 import os
-import Preln.preprocessing as pln
+import pandas as pd
 
 from Driveup.drive import Drive
 from Driveup.features.auth import authorize
@@ -103,6 +103,19 @@ class TestDrive(unittest.TestCase):
         drive_obj = Drive(creds)
 
         drive_obj.update(UPLOAD_FILE_PATH_1,'19EImCTn8Ou2zEZ8zWrDUKzyqnqKztJLf')
+
+    def test_df_update(self):
+
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        df = pd.DataFrame({
+                'test column key': ['test1', 'test2', 'test3', 'test4', 'test5'],
+                'test column value': [1,2,3,4,5]
+            })
+
+        drive_obj.df_update(df,'171WCxM-NCcRvComPLXzAITkERhHi0t7XzdLtDM7twoA','hoja')
 
         
         

@@ -7,7 +7,8 @@ import re
 class Drive:
     def __init__(self,creds):
         self.mode = creds['type']
-        self.service = build('drive', 'v3', credentials=creds['creds'])
+        self.drive_service = build('drive', 'v3', credentials=creds['creds'])
+        self.sheets_service = build('sheets', 'v4', credentials=creds['creds'])
     
     @overload
     def upload(self,file_path:list,folder_id:Union[str, List[str]],file_title:str=None,file_id:Union[str, List[str]]=None,update=True,convert=False,url=True):
@@ -47,7 +48,7 @@ class Drive:
             if file_title == None:
                 file_title = self.get_filename(file_path)
 
-            drive_service = self.service
+            drive_service = self.drive_service
 
             file_metadata = None
 
@@ -81,13 +82,44 @@ class Drive:
 
     def update(self,file_path: str,file_id: str):
         
-        drive_service = self.service
+        drive_service = self.drive_service
         media = MediaFileUpload(file_path, resumable=True)
         void_metadata = {}
 
         gfile = drive_service.files().update(fileId=file_id, body=void_metadata, media_body=media).execute()
 
         return gfile
+    
+    def df_update(self,df,id,sheet_name):
+
+        sheets_service = self.sheets_service
+
+        values = [df.columns.tolist()] + df.values.tolist()
+
+        value_range = {
+            'range': sheet_name,  # Specify the range where you want to update the values
+            'values': values
+        }
+        
+        # Build the request body   
+        requests = {
+            "valueInputOption": 'USER_ENTERED',
+            "data": [value_range]
+        }
+
+        # clear mask
+        sheets_service.spreadsheets().values().clear(spreadsheetId=id,range=sheet_name, body={}).execute()
+
+        # Update the values in the spreadsheet
+        # sheets_service.spreadsheets().values().update(spreadsheetId=id, range=sheet_name, valueInputOption='USER_ENTERED', body=request_body).execute()
+        sheets_service.spreadsheets().values().batchUpdate(spreadsheetId=id, body=requests).execute()
+
+        # sheet_metadata = sheets_service.spreadsheets().get(spreadsheetId=id).execute()
+        # sheets = sheet_metadata.get('sheets', '')
+        # title = sheets[0].get("properties", {}).get("title", "Sheet1")
+        # sheet_id = sheets[0].get("properties", {}).get("sheetId", 0)
+
+        # print(title,sheet_id)
 
     
     # returns metadata for the file (whether it exists or not)
@@ -182,7 +214,7 @@ class Drive:
 
     def create_subfolder(self,subfolder_name,subfolder_id,parent_folder_id,update):
 
-        drive_service = self.service
+        drive_service = self.drive_service
 
         subfolder = None
 
