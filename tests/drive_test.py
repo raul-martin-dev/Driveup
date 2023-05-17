@@ -18,7 +18,7 @@ DRIVE_FOLDER_ID = 'https://drive.google.com/drive/folders/1wXpG03SN0RXI7y1QAd03I
 
 class TestDrive(unittest.TestCase):
     def test_upload(self):
-        creds = authorize(CLIENT_SECRET_PATH)
+        creds = authorize(SERVICE_SECRET_PATH)
 
         drive_obj = Drive(creds)
 
@@ -95,6 +95,14 @@ class TestDrive(unittest.TestCase):
         drive_obj = Drive(creds)
 
         drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID,convert=True)
+
+    def test_update(self):
+
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        drive_obj.update(UPLOAD_FILE_PATH_1,'19EImCTn8Ou2zEZ8zWrDUKzyqnqKztJLf')
 
         
         
