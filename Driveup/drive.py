@@ -90,9 +90,15 @@ class Drive:
 
         return gfile
     
-    def df_update(self,df,id,sheet_name):
+    def df_update(self,df,id,sheet_name = None):
 
         sheets_service = self.sheets_service
+
+        if sheet_name == None:
+            sheet_metadata = sheets_service.spreadsheets().get(spreadsheetId=id).execute()
+            sheets = sheet_metadata.get('sheets', '')
+            sheet_name = sheets[0].get("properties", {}).get("title", "Sheet1")
+            # sheet_id = sheets[0].get("properties", {}).get("sheetId", 0)
 
         values = [df.columns.tolist()] + df.values.tolist()
 
@@ -113,13 +119,6 @@ class Drive:
         # Update the values in the spreadsheet
         # sheets_service.spreadsheets().values().update(spreadsheetId=id, range=sheet_name, valueInputOption='USER_ENTERED', body=request_body).execute()
         sheets_service.spreadsheets().values().batchUpdate(spreadsheetId=id, body=requests).execute()
-
-        # sheet_metadata = sheets_service.spreadsheets().get(spreadsheetId=id).execute()
-        # sheets = sheet_metadata.get('sheets', '')
-        # title = sheets[0].get("properties", {}).get("title", "Sheet1")
-        # sheet_id = sheets[0].get("properties", {}).get("sheetId", 0)
-
-        # print(title,sheet_id)
 
     
     # returns metadata for the file (whether it exists or not)
