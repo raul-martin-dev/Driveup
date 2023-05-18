@@ -117,6 +117,29 @@ class TestDrive(unittest.TestCase):
 
         drive_obj.df_update(df,'171WCxM-NCcRvComPLXzAITkERhHi0t7XzdLtDM7twoA')
 
+    def test_df_update_list(self):
+
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        df1 = pd.DataFrame({
+                'test column key': ['test1', 'test2', 'test3', 'test4', 'test5'],
+                'test column value': [1,2,3,4,5]
+            })
+        df2 = pd.DataFrame({
+                'test column key DF2': ['test1', 'test2', 'test3', 'test4', 'test5'],
+                'test column value DF2': [5,4,3,2,1]
+            })
+        df3 = pd.DataFrame({
+                'test column key DF3': ['test1', 'test2', 'test3', 'test4', 'test5'],
+                'test column value DF3': [1,5,2,4,3]
+            })
+        
+        df_list = [df1,df2,df3]
+
+        drive_obj.df_update(df_list,'171WCxM-NCcRvComPLXzAITkERhHi0t7XzdLtDM7twoA')
+
         
         
 if __name__ == "__main__":

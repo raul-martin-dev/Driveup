@@ -4,6 +4,8 @@ from googleapiclient.http import MediaFileUpload
 import os
 import re
 
+from pandas import DataFrame
+
 class Drive:
     def __init__(self,creds):
         self.mode = creds['type']
@@ -90,35 +92,37 @@ class Drive:
 
         return gfile
     
-    def df_update(self,df,id,sheet_name = None):
+    def df_update(self,df:Union[DataFrame, List[DataFrame]],id:str,sheet_name:str = None):
 
         sheets_service = self.sheets_service
 
-        if sheet_name == None:
-            sheet_metadata = sheets_service.spreadsheets().get(spreadsheetId=id).execute()
-            sheets = sheet_metadata.get('sheets', '')
-            sheet_name = sheets[0].get("properties", {}).get("title", "Sheet1")
-            # sheet_id = sheets[0].get("properties", {}).get("sheetId", 0)
+        sheets = sheets_service.spreadsheets().get(spreadsheetId=id).execute().get('sheets', '')
+        # sheet_id = sheets[0].get("properties", {}).get("sheetId", 0)
 
-        values = [df.columns.tolist()] + df.values.tolist()
+        if isinstance(df, list): 
+            for single_df,sheet in zip(df,sheets):
+                sheet_name = sheet.get("properties", {}).get("title", "Sheet1")
+                self.df_update(single_df,id,sheet_name)       
+        else:
+            if sheet_name == None:
+                sheet_name = sheets[0].get("properties", {}).get("title", "Sheet1")
 
-        value_range = {
-            'range': sheet_name,  # Specify the range where you want to update the values
-            'values': values
-        }
-        
-        # Build the request body   
-        requests = {
-            "valueInputOption": 'USER_ENTERED',
-            "data": [value_range]
-        }
+            values = [df.columns.tolist()] + df.values.tolist()
 
-        # clear mask
-        sheets_service.spreadsheets().values().clear(spreadsheetId=id,range=sheet_name, body={}).execute()
+            value_range = {
+                'range': sheet_name,  # Specify the range where you want to update the values
+                'values': values
+            }
+            
+            # Build the request body   
+            requests = {
+                "valueInputOption": 'USER_ENTERED',
+                "data": [value_range]
+            }
 
-        # Update the values in the spreadsheet
-        # sheets_service.spreadsheets().values().update(spreadsheetId=id, range=sheet_name, valueInputOption='USER_ENTERED', body=request_body).execute()
-        sheets_service.spreadsheets().values().batchUpdate(spreadsheetId=id, body=requests).execute()
+            # clear mask
+            sheets_service.spreadsheets().values().clear(spreadsheetId=id,range=sheet_name, body={}).execute()
+            sheets_service.spreadsheets().values().batchUpdate(spreadsheetId=id, body=requests).execute()
 
     
     # returns metadata for the file (whether it exists or not)
