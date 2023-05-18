@@ -1,6 +1,7 @@
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 import os
+import pandas as pd
 
 from features import utils,service
 
@@ -150,3 +151,10 @@ class Drive:
                     print('\nError uploading file: ' + file_path + '\n(Not file or directory)')
             else:
                 self.upload(file_path,folder_id,update=update)
+
+    # def download(self,id):
+
+    #     sheet_url = 'https://docs.google.com/spreadsheets/d/' + id
+    #     sheet_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
+        
+    #     df = pd.read_csv(sheet_url)
