@@ -3,10 +3,9 @@ from googleapiclient.http import MediaFileUpload
 import os
 import pandas as pd
 
-from features import utils,service
+from Driveup.features import utils,service
 
 from typing import overload,Union,List
-from pandas import DataFrame
 
 class Drive:
     def __init__(self,creds):
@@ -93,7 +92,7 @@ class Drive:
 
         return gfile
     
-    def df_update(self,df:Union[DataFrame, List[DataFrame]],id:str,sheet_name:str = None):
+    def df_update(self,df:Union[pd.DataFrame, List[pd.DataFrame]],id:str,sheet_name:str = None):
 
         sheets_service = self.sheets_service
 

@@ -1,4 +1,4 @@
-import utils
+from Driveup.features import utils
 
 # returns metadata for the file (whether it exists or not)
 def get_update(name,file_id,folder_id,service,mode):
