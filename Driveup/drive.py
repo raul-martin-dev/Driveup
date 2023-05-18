@@ -1,10 +1,10 @@
-from typing import overload,Union,List
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
-from features import utils
 import os
-import re
 
+from features import utils,service
+
+from typing import overload,Union,List
 from pandas import DataFrame
 
 class Drive:
@@ -59,7 +59,7 @@ class Drive:
 
             # possible refactor
             if update == True:
-                file_metadata = self.get_update(file_title,file_id,folder_id,drive_service)
+                file_metadata = service.get_update(file_title,file_id,folder_id,drive_service,self.mode)
                     
             if file_metadata == None: # Doesn't exist in the folder already or update=False (duplicating file)
                 if self.mode == 'client':
@@ -136,7 +136,7 @@ class Drive:
             if subfolder_name == None:
                 subfolder_name = utils.get_filename(local_folder_path)
 
-            folder_id = self.create_subfolder(subfolder_name,subfolder_id,folder_id,update,self.drive_service)
+            folder_id = service.create_subfolder(subfolder_name,subfolder_id,folder_id,update,self.drive_service,self.mode)
 
         for file in files_list:
             file_path = str(local_folder_path)+ '/' + file
@@ -150,46 +150,3 @@ class Drive:
                     print('\nError uploading file: ' + file_path + '\n(Not file or directory)')
             else:
                 self.upload(file_path,folder_id,update=update)
-    
-    # returns metadata for the file (whether it exists or not)
-    def get_update(self,name,file_id,folder_id,service):
-        if file_id != None: # use specified id
-                if self.mode == 'client':
-                    file_metadata = {'id':file_id,'name': name,'parents': [folder_id]} # Change name: doesn't work
-                else:
-                    file_metadata = {'id':file_id,'name': name,'parents': folder_id} # Change name: doesn't work
-
-        else: # obtain id for duplicated file (file with same name) and overwrite
-            file_id = utils.find_duplicate(self.list_files(folder_id,service),name = name)
-            if file_id != None: # duplicate found
-                if self.mode == 'client':
-                    file_metadata = {'id':file_id,'name': name,'parents': [folder_id]}
-                else:
-                    file_metadata = {'id':file_id,'name': name,'parents': folder_id}
-            else: # duplicate not found
-                file_metadata = None
-
-        return file_metadata
-    
-    def list_files(self,folder_id,service):
-        results = service.files().list(q=f"'{folder_id}' in parents and trashed = false", fields="nextPageToken, files(id, name)").execute()  
-        files = results.get('files', [])
-        
-        return files
-            
-    def create_subfolder(self,subfolder_name,subfolder_id,parent_folder_id,update,service):
-
-        subfolder = None
-
-        if update == True:
-            subfolder = self.get_update(subfolder_name,subfolder_id,parent_folder_id,service)
-        
-        subfolder_metadata = {'name': subfolder_name, 'mimeType': 'application/vnd.google-apps.folder', 'parents': [parent_folder_id]}
-
-        if subfolder == None:
-            subfolder = service.files().create(body=subfolder_metadata, fields='id').execute()
-        else:
-            subfolder['mimeType'] = subfolder_metadata['mimeType']
-
-        return subfolder['id']
-    

@@ -1,4 +1,5 @@
 import os
+import re
 
 def get_filename(path):
     name = os.path.basename(path)
