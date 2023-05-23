@@ -91,6 +91,14 @@ class TestDrive(unittest.TestCase):
 
         drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID,convert=True)
 
+    def test_upload_shared_unit(self):
+
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        drive_obj.upload(UPLOAD_FILE_PATH_1,'1ih9O_Tb4qZmpXogb7WPwYWA969bnmDL6',convert=True)
+
     def test_update(self):
 
         creds = authorize(SERVICE_SECRET_PATH)
@@ -134,6 +142,18 @@ class TestDrive(unittest.TestCase):
         df_list = [df1,df2,df3]
 
         drive_obj.df_update(df_list,'171WCxM-NCcRvComPLXzAITkERhHi0t7XzdLtDM7twoA')
+
+    def test_download(self):
+
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        df = drive_obj.download('19EImCTn8Ou2zEZ8zWrDUKzyqnqKztJLf')
+
+        print(df)
+    
+    
 
         
         

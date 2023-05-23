@@ -70,13 +70,13 @@ class Drive:
                 if convert == True:
                     file_metadata = utils.convert(file_metadata,utils.get_file_extension(file_path))
 
-                gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+                gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id',supportsAllDrives=True).execute()
 
                 if self.mode == 'service':
                     old_parents = gfile.get('parents')
                     file_id = gfile.get('id')
 
-                    drive_service.files().update(fileId=file_id,removeParents=old_parents,addParents=folder_id).execute()
+                    drive_service.files().update(fileId=file_id,removeParents=old_parents,addParents=folder_id,supportsAllDrives=True).execute()
 
             else: # File already exists: update
                 file_id = file_metadata['id']
@@ -88,7 +88,7 @@ class Drive:
         media = MediaFileUpload(file_path, resumable=True)
         void_metadata = {}
 
-        gfile = drive_service.files().update(fileId=file_id, body=void_metadata, media_body=media).execute()
+        gfile = drive_service.files().update(fileId=file_id, body=void_metadata, media_body=media,supportsAllDrives=True).execute()
 
         return gfile
     
@@ -151,9 +151,11 @@ class Drive:
             else:
                 self.upload(file_path,folder_id,update=update)
 
-    # def download(self,id):
+    def download(self,id):
 
-    #     sheet_url = 'https://docs.google.com/spreadsheets/d/' + id
-    #     sheet_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
+        sheet_url = 'https://docs.google.com/spreadsheets/d/' + id
+        sheet_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
         
-    #     df = pd.read_csv(sheet_url)
+        df = pd.read_csv(sheet_url)
+
+        return df

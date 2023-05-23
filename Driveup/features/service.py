@@ -21,7 +21,7 @@ def get_update(name,file_id,folder_id,service,mode):
     return file_metadata
     
 def list_files(folder_id,service):
-    results = service.files().list(q=f"'{folder_id}' in parents and trashed = false", fields="nextPageToken, files(id, name)").execute()  
+    results = service.files().list(q=f"'{folder_id}' in parents and trashed = false", fields="nextPageToken, files(id, name)",supportsAllDrives=True).execute()  
     files = results.get('files', [])
         
     return files
@@ -36,7 +36,7 @@ def create_subfolder(subfolder_name,subfolder_id,parent_folder_id,update,service
     subfolder_metadata = {'name': subfolder_name, 'mimeType': 'application/vnd.google-apps.folder', 'parents': [parent_folder_id]}
 
     if subfolder == None:
-        subfolder = service.files().create(body=subfolder_metadata, fields='id').execute()
+        subfolder = service.files().create(body=subfolder_metadata, fields='id',supportsAllDrives=True).execute()
     else:
         subfolder['mimeType'] = subfolder_metadata['mimeType']
 
