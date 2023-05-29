@@ -14,6 +14,7 @@ SERVICE_SECRET_PATH = os.path.join(tests_dir,"__testsDataFiles","auth_testFiles"
 UPLOAD_FILE_PATH_1 = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles","test_file.csv")
 UPLOAD_FILE_PATH_2 = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles","test_file_test.csv")
 UPLOAD_FOLDER_PATH = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles","test_folder")
+DOWNLOAD_PATH = os.path.join(tests_dir,"__testsDataFiles","download_testFiles","file.csv")
 DRIVE_FOLDER_ID = 'https://drive.google.com/drive/folders/1wXpG03SN0RXI7y1QAd03IDGH2eXFD_VS'
 
 class TestDrive(unittest.TestCase):
@@ -149,9 +150,7 @@ class TestDrive(unittest.TestCase):
 
         drive_obj = Drive(creds)
 
-        df = drive_obj.download('19EImCTn8Ou2zEZ8zWrDUKzyqnqKztJLf')
-
-        print(df)
+        drive_obj.download('19EImCTn8Ou2zEZ8zWrDUKzyqnqKztJLf',DOWNLOAD_PATH)
     
     
 

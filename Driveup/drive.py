@@ -2,6 +2,8 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 import os
 import pandas as pd
+import io
+from googleapiclient.http import MediaIoBaseDownload
 
 from Driveup.features import utils,service
 
@@ -151,11 +153,14 @@ class Drive:
             else:
                 self.upload(file_path,folder_id,update=update)
 
-    def download(self,id):
+    def download(self,id,path):
 
-        sheet_url = 'https://docs.google.com/spreadsheets/d/' + id
-        sheet_url = sheet_url.replace('/edit#gid=', '/export?format=csv&gid=')
-        
-        df = pd.read_csv(sheet_url)
-
-        return df
+        # Download the file
+        request = self.drive_service.files().get_media(fileId=id)
+        fh = io.FileIO(path, 'wb')
+        downloader = MediaIoBaseDownload(fh, request)
+        done = False
+        while not done:
+            status, done = downloader.next_chunk()
+            print(f'Download progress: {status.progress() * 100:.2f}%')
+        print(f'Download complete: {path}')
