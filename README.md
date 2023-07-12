@@ -1,10 +1,12 @@
-Python package for uploading files and folders to Google Drive
+<p align="center"><img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/Driveup.png" alt="logo" width="80%" /></p>
 
 <p align="center">
-  <a href="https://pypi.org/project/driveup/">
-    <img src="https://img.shields.io/pypi/v/driveup" alt="PyPI" />
-  </a>
-  <a href="https://pepy.tech/project/driveup">
-    <img src="https://pepy.tech/badge/driveup/month" alt="downloads" />
-  </a>
+ <i>Driveup logo</i>
+</p>
+
+
+----------------------
+
+<p align="justify">
+Driveup is a python package to upload files and folders to Google Drive.
 </p>
