@@ -53,6 +53,15 @@ drive_obj = Drive(creds)
 drive_obj.upload(EXCEL_PATH,DRIVE_FOLDER_ID)
 
 ```
+## 🔑​ Getting credentials file
+
+In order to get access to **Google Drive's API** (required to use this package), you will need either a "service" or a "client" **secret .json file** (SECRET_PATH variable mentioned in the example of use).
+
+You can follow the next steps to download this file:
+
+### 1. Go to Google Cloud's console
+
+
 
 # 💳​ License
 Driveup is licensed under [MIT License](LICENSE).
