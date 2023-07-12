@@ -59,9 +59,9 @@ In order to get access to **Google Drive's API** (required to use this package),
 
 You can follow the next steps to download this file:
 
-### 1. Go to Google Cloud's console
+### 1. Create a new proyect
 
-
+Go to [Google Cloud's console](https://console.cloud.google.com/apis/dashboard)) and create a new proyect:
 
 # 💳​ License
 Driveup is licensed under [MIT License](LICENSE).
