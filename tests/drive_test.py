@@ -47,36 +47,6 @@ class TestDrive(unittest.TestCase):
 
         drive_obj.upload(files,'1R8caV6WVxSqKDC41EhmZB5ARBcp1F-7d',file_id=ids)
 
-    # def test_upload_list_folders(self):
-    #     creds = authorize(SERVICE_SECRET_PATH)
-
-    #     drive_obj = Drive(creds)
-
-    #     # ids = ['1LKUzha5IqtfQi3t8fnqK09pWfonfLKc3','1BJs_eDUR0XDR82N3sxzRz4wqrueJFGQX']
-    #     files = [UPLOAD_FILE_PATH_1,UPLOAD_FILE_PATH_2]
-    #     folders = [DRIVE_FOLDER_ID,'1R8caV6WVxSqKDC41EhmZB5ARBcp1F-7d']
-
-    #     # drive_obj.upload(files,DRIVE_FOLDER_ID,file_id=ids)
-    #     drive_obj.upload(files,folders)
-    #     # drive_obj.upload(files,folders,file_id=ids)
-    #     # drive_obj.upload(UPLOAD_FILE_PATH_1,folders)
-
-    # def test_upload_folder(self):
-
-    #     creds = authorize(CLIENT_SECRET_PATH)
-
-    #     drive_obj = Drive(creds)
-
-    #     drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID)
-    
-    # def test_upload_folder_no_convert(self):
-
-    #     creds = authorize(CLIENT_SECRET_PATH)
-
-    #     drive_obj = Drive(creds)
-
-    #     drive_obj.upload_folder(UPLOAD_FOLDER_PATH,DRIVE_FOLDER_ID)
-
     def test_upload_service(self):
         creds = authorize(SERVICE_SECRET_PATH)
 
