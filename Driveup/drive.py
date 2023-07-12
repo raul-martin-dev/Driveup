@@ -94,7 +94,8 @@ class Drive:
 
         return gfile
     
-    def df_update(self,df:Union[pd.DataFrame, List[pd.DataFrame]],id:str,sheet_name:str = None):
+    def df_update(self,df:Union[pd.DataFrame, List[pd.DataFrame]],id:str,sheet_name:str = None,unformat:bool = False):
+
 
         sheets_service = self.sheets_service
 
@@ -106,6 +107,10 @@ class Drive:
                 sheet_name = sheet.get("properties", {}).get("title", "Sheet1")
                 self.df_update(single_df,id,sheet_name)       
         else:
+            if unformat == True:
+                df = df.fillna('NULL')
+                df = df.astype(str)
+
             if sheet_name == None:
                 sheet_name = sheets[0].get("properties", {}).get("title", "Sheet1")
 
