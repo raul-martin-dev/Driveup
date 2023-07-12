@@ -20,12 +20,11 @@ Driveup is a python package to upload files and folders to Google Drive.
 
 # 💼​ Features
 - Simplify google drive api usage
-- Simplify google authorization flow
+- Simplify google authorization flow (working both on service and client account in the same way)
 - Upload files and folders to google drive via python
 - Update google sheets content with pandas dataframes
 - Update drive files content in flexible ways
 - Download drive files
-
 
 # ​💾​ Install DriveUp
 
@@ -37,8 +36,26 @@ pip install driveup
 
 Note: you might have to add this command as a “code” line in order to use Driveup on a Python notebook.
 
+## 🔧​ Example of use
+
+In this basic example, you can check how to use the package in order to upload an excel file to an specific folder in google drive.
+
+```python
+from Driveup.drive import Drive
+from Driveup.features.auth import authorize
+
+EXCEL_PATH = 'C:\\Data\\Path\\sample_excel_file.xlsx'
+SECRET_PATH = 'C:\\Data\\Path\\Secret\\service_account_key.json'
+DRIVE_FOLDER_ID = 'https://drive.google.com/drive/folders/1wXpG03SN0RXI7y1QAd03IDGH2eXFD_VS'
+
+creds = authorize(SECRET_PATH)
+drive_obj = Drive(creds)
+drive_obj.upload(EXCEL_PATH,DRIVE_FOLDER_ID)
+
+```
+
 # 💳​ License
-Preln is licensed under [MIT License](LICENSE).
+Driveup is licensed under [MIT License](LICENSE).
 
 # 🗃️ Shields
 <p align="center">
