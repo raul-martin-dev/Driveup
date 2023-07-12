@@ -10,3 +10,32 @@
 <p align="justify">
 Driveup is a python package to upload files and folders to Google Drive.
 </p>
+
+# 💬​ Contribution & Questions
+| Contribution & Questions Type     | Platforms                               |
+| ------------------------------- | --------------------------------------- |
+| 🐞​​ **Bug Reports**              | [GitHub Issue Tracker]                  |
+| 📦​ **Feature Requests & Ideas** | [GitHub Discussions]                    |
+| 🛠️​ **Usage Questions & Discusions**          | [GitHub Discussions] |
+
+# 💼​ Features
+- Simplify google drive api usage
+- Simplify google authorization flow
+- Upload files and folders to google drive via python
+- Update google sheets content with pandas dataframes
+- Update drive files content in flexible ways
+- Download drive files
+
+
+# ​💾​ Install DriveUp
+
+To start using DriveUp use the next command:
+
+```markdown
+pip install driveup
+```
+
+Note: you might have to add this command as a “code” line in order to use Driveup on a Python notebook.
+
+# 💳​ License
+Preln is licensed under [MIT License](LICENSE).
