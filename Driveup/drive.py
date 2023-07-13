@@ -34,7 +34,7 @@ class Drive:
         ...
     
     def upload(self,file_path: Union[str, List[str]],folder_id:Union[str, List[str]],file_title:str=None,file_id: Union[str, List[str]]=None,update=True,convert=False,url=True):
-        """Upload a file or a list of files to a specified folder(s) by ID.
+        """Upload a file or a list of files to a specified drive folder(s) by ID.
 
         Iterates through the folder's files searching for one with the same name as the local 
         file (unless other name is specified as file_title). If the file doesn'exist in the folder, 
@@ -179,7 +179,25 @@ class Drive:
             sheets_service.spreadsheets().values().clear(spreadsheetId=id,range=sheet_name, body={}).execute()
             sheets_service.spreadsheets().values().batchUpdate(spreadsheetId=id, body=requests).execute()
 
-    def upload_folder(self,local_folder_path,folder_id,update=True,subfolder=True,subfolder_name=None,subfolder_id=None,recursive=True,convert=False,url=True):
+    def upload_folder(self,local_folder_path,folder_id,update=True,subfolder=True,subfolder_name=None,recursive=True,convert=False,url=True):
+        """Upload entire local folder to a specified drive folder by ID.
+
+        Takes all the content of a local folder and uploads it with the same structure to 
+        Drive. If files or folders exists already and are strucutured in the same way as 
+        local and named the same, it's contents will be updated with the local information, 
+        otherwise, they will be created in it's corresponding place of the structure.
+
+        Args:
+            local_folder_path: Path of the local folder wich contents will be uploaded.
+            folder_id: ID of the drive folder in wich the local folder's content will be uploaded.
+            update: If set to True, the method will be overwrite (update) the content of an existing files and folders with the same name in drive. Otherwise, it will create others with the same name.
+            subfolder: If set to True, the method will respect the subfolder structure of the local subfolder and replicate it on drive creating the subfolders and uploading the files in it's places. Otherwise, it will upload all files on the local folder and it's subfolders to the same Drive folder not creating subfolders (this could cause conflict with files with the same name in different subfolders as it will overwrite them).
+            subfolder_name: Name of all the subfolders created by the method. If set to None, names will be created normally following the names assigned locally.
+            recursive: If set to True, it iterates through the local folder uploading subfolders content too. Otherwise, it only will upload content of the specified folder and ignore subfolders.
+            convert: If set to True, the method will convert all files in the folder (if conversion is available) to it's corresponding google mimeType in Drive.
+            url: If set to True, the method will accept URL type input as folder_id and automatically convert it to ID type.
+            
+        """
 
         if url == True:
             folder_id = utils.url_to_id(folder_id)
@@ -191,7 +209,7 @@ class Drive:
             if subfolder_name == None:
                 subfolder_name = utils.get_filename(local_folder_path)
 
-            folder_id = service.create_subfolder(subfolder_name,subfolder_id,folder_id,update,self.drive_service,self.mode)
+            folder_id = service.create_subfolder(subfolder_name,None,folder_id,update,self.drive_service,self.mode)
 
         for file in files_list:
             file_path = str(local_folder_path)+ '/' + file
