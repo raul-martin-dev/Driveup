@@ -120,7 +120,7 @@ class Drive:
 
         Args:
             file_path: Path of the local file wich content will be overwriting (updating) the drive file content.
-            file_id: ID of the drive file that will be updated.            
+            file_id: ID of the drive file that will be updated.      
             
         """
         
@@ -225,8 +225,14 @@ class Drive:
                 self.upload(file_path,folder_id,update=update)
 
     def download(self,id,path):
+        """Downloads file.
 
-        # Download the file
+        Downloads the specified drive file content to a local file path.
+
+        Args:
+            id: Drive file wich content will be downloaded (specified by it's ID)
+            path: Local path file in wich the content will be downloaded (name of the file with extension must be included)  
+        """
         request = self.drive_service.files().get_media(fileId=id)
         fh = io.FileIO(path, 'wb')
         downloader = MediaIoBaseDownload(fh, request)
