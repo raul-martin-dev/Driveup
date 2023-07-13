@@ -114,6 +114,15 @@ class Drive:
 
                 
     def update(self,file_path: str,file_id: str):
+        """Update content of a drive file with a local file.
+
+        Updates content of a drive file specified by its id with local information on the specified file path.
+
+        Args:
+            file_path: Path of the local file wich content will be overwriting (updating) the drive file content.
+            file_id: ID of the drive file that will be updated.            
+            
+        """
         
         drive_service = self.drive_service
         media = MediaFileUpload(file_path, resumable=True)
@@ -124,7 +133,17 @@ class Drive:
         return gfile
     
     def df_update(self,df:Union[pd.DataFrame, List[pd.DataFrame]],id:str,sheet_name:str = None,unformat:bool = False):
+        """Update content of a drive sheet with a pandas dataframe.
 
+        Updates content of a drive sheet specified by its id with local information of a specified dataframe or a list of them.
+
+        Args:
+            df: Dataframe, or list of them, wich information will be used to update drive sheets. If a list of dataframes are specified, by default, they will be updating each sheet of the file in the same order of the list.
+            id: ID of the drive sheet that will be updated.  
+            sheet_name: Name of the sheet that will be updated. If set to None, first sheet of the file will be updated (unless the method is updating in list mode).  
+            unformat: If set to True, original df will be cleaned of format as string and filled NaN values with 'NULL'. Enabling this option could avoid 'Not JSON serializable' error when uploading certains dataframes.   
+            
+        """
 
         sheets_service = self.sheets_service
 
