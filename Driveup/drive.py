@@ -5,16 +5,27 @@ import pandas as pd
 import io
 from googleapiclient.http import MediaIoBaseDownload
 
+
 from Driveup.features import utils,service
 
 from typing import overload,Union,List
 
 class Drive:
+    """Contains DriveUp main methods and have full access to both drive and sheets API.
+    """
     def __init__(self,creds):
+        """Constructor for Drive.
+
+        Use credentials from authorization flow to create the object and it's services based on them.
+
+        Args:
+          creds: Dictionary containing credentials generated with auth lib and it's corresponding type. 
+          Value generated with the authorize method from the auth module in features
+        """
         self.mode = creds['type']
         self.drive_service = build('drive', 'v3', credentials=creds['creds'])
         self.sheets_service = build('sheets', 'v4', credentials=creds['creds'])
-    
+
     @overload
     def upload(self,file_path:list,folder_id:Union[str, List[str]],file_title:str=None,file_id:Union[str, List[str]]=None,update=True,convert=False,url=True):
         ...
@@ -23,6 +34,23 @@ class Drive:
         ...
     
     def upload(self,file_path: Union[str, List[str]],folder_id:Union[str, List[str]],file_title:str=None,file_id: Union[str, List[str]]=None,update=True,convert=False,url=True):
+        """Upload a file or a list of files to a specified folder(s) by ID.
+
+        Iterates through the folder's files searching for one with the same name as the local 
+        file (unless other name is specified as file_title). If the file doesn'exist in the folder, 
+        it creates one with that name and local content; else, it updates the content with the 
+        local information (unless update option is disabled).
+
+        Args:
+            file_path: Path or list of paths of the local file(s) wich content will be uploaded.
+            folder_id: ID of the drive folder(s) in wich the file(s) will be uploaded.
+            file_title: Name that will be shown in drive for the uploaded file. (If set to None, local file name will be used instead)
+            file_id: Pointing ID to overwrite the content of an specified, previously created, drive file within the folder.
+            update: If set to True, the method will be overwrite (update) the content of an existing file with the same name in drive. Otherwise, it will create another with the same name.
+            convert: If set to True, the method will convert all files (if conversion is available) to it's corresponding google mimeType in Drive.
+            url: If set to True, the method will accept URL type input as folder_id and automatically convert it to ID type.
+            
+        """
 
         if isinstance(file_path, list): # if multipath
 
@@ -83,6 +111,7 @@ class Drive:
             else: # File already exists: update
                 file_id = file_metadata['id']
                 gfile = self.update(file_path,file_id)
+
                 
     def update(self,file_path: str,file_id: str):
         
