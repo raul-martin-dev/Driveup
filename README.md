@@ -137,6 +137,7 @@ Note that if you are using a service account, you must share the drive folder in
 Driveup is licensed under [MIT License](LICENSE).
 
 # 🗃️ Shields
+
 <p align="center">
   <a href="https://pypi.org/project/driveup/">
     <img src="https://img.shields.io/pypi/v/driveup" alt="PyPI" />
