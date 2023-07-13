@@ -127,8 +127,10 @@ Edit the new created account, go to 'KEYS' tab and create one. Download the secr
 Note that if you are using a service account, you must share the drive folder in wich you will be uploading files with the service account mail direction for it to be able to find that folder. You can copy this direction from the 'service accounts' tab at the console dashboard:
 
 <p align="center">
- <img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/secret_tutorial/13.png" width="40%" />
- <img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/secret_tutorial/14.png" width="40%" />
+ <img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/secret_tutorial/13.png" width="90%" />
+</p>
+<p align="center">
+ <img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/secret_tutorial/14.png" width="80%" />
 </p>
  
 # 💳​ License
