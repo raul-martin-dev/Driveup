@@ -107,6 +107,30 @@ Create a service/client account with access to this new created app and all its 
  <img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/secret_tutorial/9.png" width="40%" />
 </p>
 
+Set default settings and choose a name for the account:
+
+<p align="center">
+ <img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/secret_tutorial/10.png" width="60%" />
+</p>
+
+### 4. Download secret
+
+Edit the new created account, go to 'KEYS' tab and create one. Download the secret key .json file.
+
+<p align="center">
+ <img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/secret_tutorial/11.png" width="40%" />
+ <img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/secret_tutorial/12.png" width="40%" />
+</p>
+
+#### * Special consideration
+
+Note that if you are using a service account, you must share the drive folder in wich you will be uploading files with the service account mail direction for it to be able to find that folder. You can copy this direction from the 'service accounts' tab at the console dashboard:
+
+<p align="center">
+ <img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/secret_tutorial/13.png" width="40%" />
+ <img src="https://github.com/raul-martin-dev/Driveup/blob/master/static/img/secret_tutorial/14.png" width="40%" />
+</p>
+ 
 # 💳​ License
 Driveup is licensed under [MIT License](LICENSE).
 
