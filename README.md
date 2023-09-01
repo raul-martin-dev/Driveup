@@ -139,9 +139,7 @@ Driveup is licensed under [MIT License](LICENSE).
 # 🗃️ Shields
 
 <p align="center">
-  <a href="https://pypi.org/project/driveup/">
-    <img src="https://img.shields.io/pypi/v/driveup" alt="PyPI" />
-  </a>
+  [![Downloads](https://static.pepy.tech/badge/preln)](https://pepy.tech/project/preln)
   <a href="https://pepy.tech/project/driveup">
     <img src="https://pepy.tech/badge/driveup/month" alt="downloads" />
   </a>
