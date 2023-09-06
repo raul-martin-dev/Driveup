@@ -38,12 +38,13 @@ def find_duplicate(list,name = None,file_id = None):
     
 # Transforms drive folder's URL to id. Returns ID if entry is not URL
 def url_to_id(folder_id):
-    regex = r"(https?://)?(www\.)?(drive.google\.com/)?drive/folders/(\w+)"
-    match = re.search(regex, folder_id)
-    if match:
-        return match.group(4) # (\w+) -> Alphanumeric id
-    else:
-        return folder_id
+    # regex = r"(https?://)?(www\.)?(drive.google\.com/)?drive/folders/(\w+)"
+    # match = re.search(regex, folder_id)
+    # if match:
+    #     return match.group(4) # (\w+) -> Alphanumeric id
+    # else:
+    #     return folder_id
+    return folder_id[-33:]
        
 def convert(file_metadata,extension=None):
     permited_general_extensions = ['txt',
