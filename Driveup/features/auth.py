@@ -22,6 +22,17 @@ def authorize(secrets_file):
     return creds_body
 
 def get_secret_type(path):
+    """Get file type from secret path
+    
+    Retrieves information from the secret path to determine whether is a service or
+    a client file.
+
+    Args:
+        path: Secret local file path.
+    
+    Returns:
+        secret_type: Secret local file type (service / client)
+    """
     with open(path,'r') as f:
         secret_dict = json.load(f)
 
