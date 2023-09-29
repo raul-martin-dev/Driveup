@@ -234,7 +234,11 @@ class Drive:
             path: Local path file in wich the content will be downloaded (name of the file with extension must be included)  
         """
         extension = utils.get_file_extension(path)
-        file_metadata = self.drive_service.files().get(fileId=id).execute()
+        file_metadata = self.drive_service.files().get(fileId=id,supportsAllDrives=True).execute()
+
+        shared = file_metadata.get('shared')
+        print("hola")
+        print(shared)
         
         export_type = utils.get_export_type(file_metadata,extension)
 
