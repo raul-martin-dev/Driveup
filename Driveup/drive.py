@@ -233,11 +233,28 @@ class Drive:
             id: Drive file wich content will be downloaded (specified by it's ID)
             path: Local path file in wich the content will be downloaded (name of the file with extension must be included)  
         """
-        request = self.drive_service.files().get_media(fileId=id)
-        fh = io.FileIO(path, 'wb')
-        downloader = MediaIoBaseDownload(fh, request)
-        done = False
-        while not done:
-            status, done = downloader.next_chunk()
-            print(f'Download progress: {status.progress() * 100:.2f}%')
-        print(f'Download complete: {path}')
+        extension = utils.get_file_extension(path)
+        file_metadata = self.drive_service.files().get(fileId=id).execute()
+        
+        export_type = utils.get_export_type(file_metadata,extension)
+
+        if export_type == 'error':
+            print("\nError downloading file: " + path + "\n." + extension + " extension it's not an available type of convertion for the specified file")
+            
+        elif export_type == 'binary':
+            # Needs warning advising that file migth be empty when downloading binaries
+            # print ('warning')
+            request = self.drive_service.files().get_media(fileId=id)
+            fh = io.FileIO(path, 'wb')
+            downloader = MediaIoBaseDownload(fh, request)
+            # done = False
+            # while not done:
+            #     status, done = downloader.next_chunk()
+            #     print(f'Download progress: {status.progress() * 100:.2f}%')
+            # print(f'Download complete: {path}')
+        else:
+            request = self.drive_service.files().export_media(fileId=id, mimeType=export_type)
+            response = request.execute()
+            with open(path, 'wb') as f:
+                f.write(response)
+        
