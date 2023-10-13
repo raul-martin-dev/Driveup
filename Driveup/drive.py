@@ -227,7 +227,12 @@ class Drive:
     def download(self,id,path):
         """Downloads file.
 
-        Downloads the specified drive file content to a local file path.
+        Downloads the specified drive file content to a local file path. The method checks the file's 
+        MIME type to determine how to download it. If the file is a binary file, the method uses the 
+        get_media method to download the file directly to the local file path. If the file is a text file, 
+        the method uses the export_media method to convert the file to a text format and then download it 
+        to the local file path. The exported file will have the extension specified in the path if the 
+        conversion is available.
 
         Args:
             id: Drive file wich content will be downloaded (specified by it's ID)
