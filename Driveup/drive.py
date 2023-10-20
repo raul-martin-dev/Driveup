@@ -266,4 +266,35 @@ class Drive:
             response = request.execute()
             with open(path, 'wb') as f:
                 f.write(response)
-        
+    
+    def df_download(self,id,sheet_name=None):
+        """Download content of a drive sheet to a pandas dataframe.
+
+        Downloads content of a drive sheet specified by its id to a pandas dataframe.
+
+        Args:
+            id: ID of the drive sheet that will be downloaded.  
+            sheet_name: Name of the specific sheet that will be downloaded. If set to None, first sheet of the file will be downloaded.  
+            
+        """
+
+        if sheet_name == None:
+            sheet_metadata = self.sheets_service.spreadsheets().values().get(spreadsheetId=id, range='A1:Z').execute()
+        else:
+            sheet_metadata = self.sheets_service.spreadsheets().values().get(spreadsheetId=id, range=sheet_name, valueRenderOption='UNFORMATTED_VALUE', dateTimeRenderOption='FORMATTED_STRING').execute()
+        values = sheet_metadata.get('values', [])
+
+        headers = values[0]
+        rows = values[1:]
+
+        max_cols = max(len(row) for row in rows)
+        max_dimensions = max(len(headers),max_cols)
+
+        headers += [None] * (max_dimensions - len(headers))
+
+        for row in rows:
+            row += [None] * (max_dimensions - len(row))
+
+        df = pd.DataFrame(rows,columns=headers)
+
+        return df

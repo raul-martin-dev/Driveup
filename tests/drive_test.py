@@ -122,6 +122,14 @@ class TestDrive(unittest.TestCase):
         drive_obj = Drive(creds)
 
         drive_obj.download(DOWNLOAD_ID,DOWNLOAD_PATH)
+
+    def test_df_download(self):
+
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        df = drive_obj.df_download(DOWNLOAD_ID)
     
     
 
