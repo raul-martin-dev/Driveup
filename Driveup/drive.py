@@ -158,6 +158,7 @@ class Drive:
             if unformat == True:
                 df = df.fillna('NULL')
                 df = df.astype(str)
+                df.columns = df.columns.astype(str)
 
             if sheet_name == None:
                 sheet_name = sheets[0].get("properties", {}).get("title", "Sheet1")
@@ -300,5 +301,7 @@ class Drive:
         if unformat == True:
             df = df.fillna('NULL')
             df = df.astype(str)
+            df.columns = df.columns.astype(str)
+
 
         return df
