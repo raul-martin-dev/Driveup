@@ -129,7 +129,9 @@ class TestDrive(unittest.TestCase):
 
         drive_obj = Drive(creds)
 
-        df = drive_obj.df_download(DOWNLOAD_ID)
+        df = drive_obj.df_download(DOWNLOAD_ID,unformat=True)
+
+        print(df.dtypes)
     
     
 

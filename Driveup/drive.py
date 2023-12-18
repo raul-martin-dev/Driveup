@@ -27,13 +27,13 @@ class Drive:
         self.sheets_service = build('sheets', 'v4', credentials=creds['creds'])
 
     @overload
-    def upload(self,file_path:list,folder_id:Union[str, List[str]],file_title:str=None,file_id:Union[str, List[str]]=None,update=True,convert=False,url=True):
+    def upload(self,file_path:list,folder_id:Union[str, List[str]],file_title:str=None,file_id:Union[str, List[str]]=None,update:bool=True,convert:bool=False,url:bool=True):
         ...
     @overload
-    def upload(self,file_path:str,folder_id:Union[str, List[str]],file_title:str=None,file_id:Union[str, List[str]]=None,update=True,convert=False,url=True):
+    def upload(self,file_path:str,folder_id:Union[str, List[str]],file_title:str=None,file_id:Union[str, List[str]]=None,update:bool=True,convert:bool=False,url:bool=True):
         ...
     
-    def upload(self,file_path: Union[str, List[str]],folder_id:Union[str, List[str]],file_title:str=None,file_id: Union[str, List[str]]=None,update=True,convert=False,url=True):
+    def upload(self,file_path: Union[str, List[str]],folder_id:Union[str, List[str]],file_title:str=None,file_id: Union[str, List[str]]=None,update:bool=True,convert:bool=False,url:bool=True):
         """Upload a file or a list of files to a specified drive folder(s) by ID.
 
         Iterates through the folder's files searching for one with the same name as the local 
@@ -179,7 +179,7 @@ class Drive:
             sheets_service.spreadsheets().values().clear(spreadsheetId=id,range=sheet_name, body={}).execute()
             sheets_service.spreadsheets().values().batchUpdate(spreadsheetId=id, body=requests).execute()
 
-    def upload_folder(self,local_folder_path,folder_id,update=True,subfolder=True,subfolder_name=None,recursive=True,convert=False,url=True):
+    def upload_folder(self,local_folder_path :str,folder_id :str,update : bool =True,subfolder : bool=True,subfolder_name:str=None,recursive: bool=True,convert: bool=False,url: bool=True):
         """Upload entire local folder to a specified drive folder by ID.
 
         Takes all the content of a local folder and uploads it with the same structure to 
@@ -224,7 +224,7 @@ class Drive:
             else:
                 self.upload(file_path,folder_id,update=update)
 
-    def download(self,id,path):
+    def download(self,id:str,path:str):
         """Downloads file.
 
         Downloads the specified drive file content to a local file path. The method checks the file's 
@@ -267,7 +267,7 @@ class Drive:
             with open(path, 'wb') as f:
                 f.write(response)
     
-    def df_download(self,id,sheet_name=None):
+    def df_download(self,id:str,sheet_name:str=None,unformat:bool = False):
         """Download content of a drive sheet to a pandas dataframe.
 
         Downloads content of a drive sheet specified by its id to a pandas dataframe.
@@ -296,5 +296,9 @@ class Drive:
             row += [None] * (max_dimensions - len(row))
 
         df = pd.DataFrame(rows,columns=headers)
+
+        if unformat == True:
+            df = df.fillna('NULL')
+            df = df.astype(str)
 
         return df
