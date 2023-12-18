@@ -25,6 +25,7 @@ Driveup is a python package to upload files and folders to Google Drive.
 - Update google sheets content with pandas dataframes
 - Update drive files content in flexible ways
 - Download drive files
+- Import google sheets data directly to a pandas dataframe
 
 # ​💾​ Install DriveUp
 
