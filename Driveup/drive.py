@@ -153,7 +153,7 @@ class Drive:
         if isinstance(df, list): 
             for single_df,sheet in zip(df,sheets):
                 sheet_name = sheet.get("properties", {}).get("title", "Sheet1")
-                self.df_update(single_df,id,sheet_name)       
+                self.df_update(single_df,id,sheet_name,unformat=unformat)       
         else:
             if unformat == True:
                 df = df.fillna('NULL')
