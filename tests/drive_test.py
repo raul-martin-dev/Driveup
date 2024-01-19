@@ -15,6 +15,7 @@ UPLOAD_FILE_PATH_1 = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles"
 UPLOAD_FILE_PATH_2 = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles","test_file_test.csv")
 UPLOAD_FOLDER_PATH = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles","test_folder")
 DOWNLOAD_PATH = os.path.join(tests_dir,"__testsDataFiles","download_testFiles","file.csv")
+DOWNLOAD_FOLDER_PATH = os.path.join(tests_dir,"__testsDataFiles","download_testFiles")
 DOWNLOAD_ID = "1I3p4BQoJfP0BgL7ezL5OFd8ExMxSvTcfUm6QPZTOu2Q"
 DRIVE_FOLDER_ID = 'https://drive.google.com/drive/folders/1wXpG03SN0RXI7y1QAd03IDGH2eXFD_VS'
 
@@ -132,6 +133,23 @@ class TestDrive(unittest.TestCase):
         df = drive_obj.df_download(DOWNLOAD_ID,unformat=True)
 
         print(df.dtypes)
+
+    def test_download_folder(self):
+
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        drive_obj.download_folder(DOWNLOAD_FOLDER_PATH,'1T5PLLmDTNbPY23GIgv5J-5xui_FnTJJ7')
+
+    def test_reupload_folder(self):
+
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        drive_obj.upload_folder(DOWNLOAD_FOLDER_PATH,'1T5PLLmDTNbPY23GIgv5J-5xui_FnTJJ7',subfolder=False,convert=True)
+
     
     
 

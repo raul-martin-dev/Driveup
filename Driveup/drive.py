@@ -180,7 +180,7 @@ class Drive:
             sheets_service.spreadsheets().values().clear(spreadsheetId=id,range=sheet_name, body={}).execute()
             sheets_service.spreadsheets().values().batchUpdate(spreadsheetId=id, body=requests).execute()
 
-    def upload_folder(self,local_folder_path :str,folder_id :str,update : bool =True,subfolder : bool=True,subfolder_name:str=None,recursive: bool=True,convert: bool=False,url: bool=True):
+    def upload_folder(self,local_folder_path :str,folder_id :str,update : bool =True,subfolder : bool=False,subfolder_name:str=None,recursive: bool=True,convert: bool=False,url: bool=True):
         """Upload entire local folder to a specified drive folder by ID.
 
         Takes all the content of a local folder and uploads it with the same structure to 
@@ -218,7 +218,9 @@ class Drive:
                 if os.path.isfile(file_path):
                     self.upload(file_path,folder_id,update=update,convert=convert,url=False) # url=False -> not checking everytime
                 elif os.path.isdir(file_path):
-                    self.upload_folder(file_path,folder_id,update=update,subfolder=subfolder,convert=convert)
+                    subfolder_name = utils.get_filename(file_path)
+                    subfolder_id = service.create_subfolder(subfolder_name,None,folder_id,update,self.drive_service,self.mode)
+                    self.upload_folder(file_path,subfolder_id,update=update,subfolder=False,convert=convert)
                 else:
                     # not file nor dir
                     print('\nError uploading file: ' + file_path + '\n(Not file or directory)')
@@ -240,16 +242,24 @@ class Drive:
             path: Local path file in wich the content will be downloaded (name of the file with extension must be included)  
         """
         extension = utils.get_file_extension(path)
-        file_metadata = self.drive_service.files().get(fileId=id,supportsAllDrives=True).execute()
+
+        file_metadata = service.get_full_metadata(id,self.drive_service)
 
         # shared = file_metadata.get('shared')
         # print("hola")
         # print(shared)
         
-        export_type = utils.get_export_type(file_metadata,extension)
+        new_extension,export_type = utils.get_export_type(file_metadata,extension)
+
+        # When extension is not specified in path, it is created by default from file's mimeType
+        if extension == '':
+            path = path + '.' + new_extension
 
         if export_type == 'error':
             print("\nError downloading file: " + path + "\n." + extension + " extension it's not an available type of convertion for the specified file")
+
+        elif export_type == 'folder-error':
+            print("\nError downloading file: " + path + "\n. File id detected as a folder. Download method is not intended for downloading drive folders, use 'download_folder()' instead")
             
         elif export_type == 'binary':
             # Needs warning advising that file migth be empty when downloading binaries
@@ -267,6 +277,58 @@ class Drive:
             response = request.execute()
             with open(path, 'wb') as f:
                 f.write(response)
+    
+    def download_folder(self, local_folder_path :str,folder_id :str,subfolder = False, recursive :bool = True, url :bool = True):
+
+        if url == True:
+            folder_id = utils.url_to_id(folder_id)
+
+        if subfolder == True:
+
+            folder_metadata = service.get_full_metadata(folder_id,self.drive_service)
+
+            local_folder_path = local_folder_path + '\\' + folder_metadata['name']
+            os.makedirs(local_folder_path, exist_ok=True)
+
+        files_list = service.list_files(folder_id,service=self.drive_service)
+
+        for file in files_list:
+            file_metadata = service.get_full_metadata(file['id'],self.drive_service)
+            drive_folder = (file_metadata['mimeType'] == 'application/vnd.google-apps.folder')
+
+            if drive_folder:
+
+                if recursive == True:
+                    subfolder_name = local_folder_path + "\\" + file_metadata['name']
+                    os.makedirs(subfolder_name, exist_ok=True)
+                else:
+                    subfolder_name = local_folder_path
+
+                self.download_folder(subfolder_name,file['id'],recursive=recursive,url=url)
+
+            else:
+                file_path = local_folder_path + '\\' + file_metadata['name']
+                self.download(file['id'],file_path)
+
+        # if subfolder == True:
+
+        #     if subfolder_name == None:
+        #         subfolder_name = utils.get_filename(local_folder_path)
+
+        #     folder_id = service.create_subfolder(subfolder_name,None,folder_id,update,self.drive_service,self.mode)
+
+        # for file in files_list:
+        #     file_path = str(local_folder_path)+ '/' + file
+        #     if recursive == True:
+        #         if os.path.isfile(file_path):
+        #             self.upload(file_path,folder_id,update=update,convert=convert,url=False) # url=False -> not checking everytime
+        #         elif os.path.isdir(file_path):
+        #             self.upload_folder(file_path,folder_id,update=update,subfolder=subfolder,convert=convert)
+        #         else:
+        #             # not file nor dir
+        #             print('\nError uploading file: ' + file_path + '\n(Not file or directory)')
+        #     else:
+        #         self.upload(file_path,folder_id,update=update)
     
     def df_download(self,id:str,sheet_name:str=None,unformat:bool = False):
         """Download content of a drive sheet to a pandas dataframe.

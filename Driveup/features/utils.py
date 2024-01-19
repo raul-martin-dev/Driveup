@@ -86,6 +86,10 @@ def get_export_type(file_metadata,extension):
 
     if mime_type == 'application/vnd.google-apps.document':
 
+        # When extension is not specified in path, it is created by default from file's mimeType
+        if extension == '':
+            extension = 'docx'
+
         if extension in ['docx','md']:
             export_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
         elif extension in ['odt','odf','fodt','fodf']:
@@ -104,6 +108,10 @@ def get_export_type(file_metadata,extension):
             export_type = "error" # Needs error control
 
     elif mime_type == 'application/vnd.google-apps.spreadsheet':
+
+        # When extension is not specified in path, it is created by default from file's mimeType
+        if extension == '':
+            extension = 'xlsx'
         
         if extension in ['xlsx','xls','slk','prn']:
             export_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -121,6 +129,10 @@ def get_export_type(file_metadata,extension):
             export_type = "error" # Needs error control
 
     elif mime_type == 'application/vnd.google-apps.presentation':
+
+        # When extension is not specified in path, it is created by default from file's mimeType
+        if extension == '':
+            extension = 'pptx'
         
         if extension in ['pptx','ppt']:
             export_type = 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
@@ -140,6 +152,10 @@ def get_export_type(file_metadata,extension):
             export_type = "error" # Needs error control
 
     elif mime_type == 'application/vnd.google-apps.drawing':
+
+        # When extension is not specified in path, it is created by default from file's mimeType
+        if extension == '':
+            extension = 'pdf'
         
         if extension == 'pdf':
             export_type = 'application/pdf'
@@ -153,14 +169,22 @@ def get_export_type(file_metadata,extension):
             export_type = "error" # Needs error control
 
     elif mime_type == 'application/vnd.google-apps.script':
+
+        # When extension is not specified in path, it is created by default from file's mimeType
+        if extension == '':
+            extension = 'json'
         
         if extension == 'json':
             export_type = 'application/vnd.google-apps.script+json'
 
+    elif mime_type == 'application/vnd.google-apps.folder':
+
+        export_type = "folder-error"
+
     else:
         export_type = 'binary'
 
-    return export_type
+    return extension,export_type
 
 
         

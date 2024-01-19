@@ -2,7 +2,7 @@ from Driveup.features import utils
 
 def get_update(name,file_id,folder_id,service,mode):
     """
-    Gets metadata for the file (whether it exists or not).
+    Creates metadata for updating / uploading drive file (whether it exists or not).
 
     If file_id is specified, it will be used to retrieve the file metadata.
     If file_id is not specified, the function will search for a duplicate file
@@ -51,6 +51,23 @@ def list_files(folder_id,service):
     files = results.get('files', [])
         
     return files
+
+def get_full_metadata(file_id,service):
+    """
+    Retrieves complete metadata of a drive file by it's id.
+
+    Metadata of a drive file contains fields like: 'kind', 'name' or 'mimeType'
+
+    Args:
+        file_id: The drive file ID.
+        service: The Google Drive service.
+
+    Returns:
+        file_metadata: The file metadata.
+    """
+    file_metadata = service.files().get(fileId=file_id,supportsAllDrives=True).execute()
+    
+    return file_metadata
             
 def create_subfolder(subfolder_name,subfolder_id,parent_folder_id,update,service,mode):
     """
