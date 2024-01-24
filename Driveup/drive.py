@@ -85,7 +85,6 @@ class Drive:
 
             file_metadata = None
 
-            media = MediaFileUpload(file_path, resumable=True)
 
             # possible refactor
             if update == True:
@@ -97,9 +96,15 @@ class Drive:
                 else:
                     file_metadata = {'name': file_title,'parents': folder_id}
 
-                if convert == True:
-                    file_metadata = utils.convert(file_metadata,utils.get_file_extension(file_path))
+                file_extension = utils.get_file_extension(file_path)
 
+                if convert == True:
+                    file_metadata = utils.convert(file_metadata,file_extension)
+                else:
+                    file_metadata['name'] += f'.{file_extension}' if file_extension != "" else file_metadata['name']
+
+                
+                media = MediaFileUpload(file_path, resumable=True)
                 gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id',supportsAllDrives=True).execute()
 
                 if self.mode == 'service':
@@ -243,11 +248,7 @@ class Drive:
         """
         extension = utils.get_file_extension(path)
 
-        file_metadata = service.get_full_metadata(id,self.drive_service)
-
-        # shared = file_metadata.get('shared')
-        # print("hola")
-        # print(shared)
+        file_metadata = service.get_full_metadata(id,self.drive_service) 
         
         new_extension,export_type = utils.get_export_type(file_metadata,extension)
 
@@ -261,24 +262,15 @@ class Drive:
         elif export_type == 'folder-error':
             print("\nError downloading file: " + path + "\n. File id detected as a folder. Download method is not intended for downloading drive folders, use 'download_folder()' instead")
             
-        elif export_type == 'binary':
-            # Needs warning advising that file migth be empty when downloading binaries
-            # print ('warning')
-            request = self.drive_service.files().get_media(fileId=id)
-            fh = io.FileIO(path, 'wb')
-            downloader = MediaIoBaseDownload(fh, request)
-            # done = False
-            # while not done:
-            #     status, done = downloader.next_chunk()
-            #     print(f'Download progress: {status.progress() * 100:.2f}%')
-            # print(f'Download complete: {path}')
         else:
-            request = self.drive_service.files().export_media(fileId=id, mimeType=export_type)
-            response = request.execute()
-            with open(path, 'wb') as f:
-                f.write(response)
+            try:
+                print(file_metadata)
+                service.drive_download(id,path,self.drive_service,mode=export_type)
+
+            except Exception as e:
+                print(f"Error downloading file: {path}\nERROR: {e}")
     
-    def download_folder(self, local_folder_path :str,folder_id :str,subfolder = False, recursive :bool = True, url :bool = True):
+    def download_folder(self, local_folder_path :str,folder_id :str,subfolder = False, recursive :bool = True, url :bool = True, files_counter = None, downloaded_files_counter = 0):
 
         if url == True:
             folder_id = utils.url_to_id(folder_id)
@@ -292,11 +284,15 @@ class Drive:
 
         files_list = service.list_files(folder_id,service=self.drive_service)
 
+        files_counter = files_counter + (len(files_list)) if files_counter != None else len(files_list)
+ 
         for file in files_list:
             file_metadata = service.get_full_metadata(file['id'],self.drive_service)
             drive_folder = (file_metadata['mimeType'] == 'application/vnd.google-apps.folder')
 
             if drive_folder:
+
+                files_counter-=1
 
                 if recursive == True:
                     subfolder_name = local_folder_path + "\\" + file_metadata['name']
@@ -304,31 +300,17 @@ class Drive:
                 else:
                     subfolder_name = local_folder_path
 
-                self.download_folder(subfolder_name,file['id'],recursive=recursive,url=url)
+                subfolder_file_count,downloaded_subfiles_counter = self.download_folder(subfolder_name,file['id'],recursive=recursive,url=url,files_counter=files_counter,downloaded_files_counter=downloaded_files_counter)
+                files_counter = subfolder_file_count
+                downloaded_files_counter = downloaded_subfiles_counter
 
             else:
+                downloaded_files_counter +=1
+                print(f"Downloading folder's files : {downloaded_files_counter}/{files_counter}")
                 file_path = local_folder_path + '\\' + file_metadata['name']
                 self.download(file['id'],file_path)
 
-        # if subfolder == True:
-
-        #     if subfolder_name == None:
-        #         subfolder_name = utils.get_filename(local_folder_path)
-
-        #     folder_id = service.create_subfolder(subfolder_name,None,folder_id,update,self.drive_service,self.mode)
-
-        # for file in files_list:
-        #     file_path = str(local_folder_path)+ '/' + file
-        #     if recursive == True:
-        #         if os.path.isfile(file_path):
-        #             self.upload(file_path,folder_id,update=update,convert=convert,url=False) # url=False -> not checking everytime
-        #         elif os.path.isdir(file_path):
-        #             self.upload_folder(file_path,folder_id,update=update,subfolder=subfolder,convert=convert)
-        #         else:
-        #             # not file nor dir
-        #             print('\nError uploading file: ' + file_path + '\n(Not file or directory)')
-        #     else:
-        #         self.upload(file_path,folder_id,update=update)
+        return files_counter,downloaded_files_counter
     
     def df_download(self,id:str,sheet_name:str=None,unformat:bool = False):
         """Download content of a drive sheet to a pandas dataframe.

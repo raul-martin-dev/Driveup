@@ -140,7 +140,7 @@ class TestDrive(unittest.TestCase):
 
         drive_obj = Drive(creds)
 
-        drive_obj.download_folder(DOWNLOAD_FOLDER_PATH,'1T5PLLmDTNbPY23GIgv5J-5xui_FnTJJ7')
+        drive_obj.download_folder(DOWNLOAD_FOLDER_PATH,'1i_VbyxIYki3x4EVYIYvZdF-L2bxAg_E2',subfolder=True)
 
     def test_reupload_folder(self):
 
@@ -148,7 +148,7 @@ class TestDrive(unittest.TestCase):
 
         drive_obj = Drive(creds)
 
-        drive_obj.upload_folder(DOWNLOAD_FOLDER_PATH,'1T5PLLmDTNbPY23GIgv5J-5xui_FnTJJ7',subfolder=False,convert=True)
+        drive_obj.upload_folder(DOWNLOAD_FOLDER_PATH,'1i_VbyxIYki3x4EVYIYvZdF-L2bxAg_E2',subfolder=True,convert=False)
 
     
     

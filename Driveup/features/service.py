@@ -1,4 +1,7 @@
 from Driveup.features import utils
+from tqdm import tqdm
+import io
+from googleapiclient.http import MediaIoBaseDownload
 
 def get_update(name,file_id,folder_id,service,mode):
     """
@@ -101,3 +104,32 @@ def create_subfolder(subfolder_name,subfolder_id,parent_folder_id,update,service
 
     return subfolder['id']
     
+def drive_download(id,path,service ,mode):
+
+    # Unable to get real size of the file (without duplicating API calls)
+    size = 0
+
+    if mode == 'binary':
+        request = service.files().get_media(fileId=id)
+
+        fh = io.FileIO(path, 'wb')
+
+        downloader = MediaIoBaseDownload(fh, request)
+
+        with tqdm(total=size, unit='B', unit_scale=True, unit_divisor=1024, ncols=80) as pbar:
+            done = False
+            while not done:
+                status, done = downloader.next_chunk()
+                pbar.update(status.resumable_progress - pbar.n)
+    else:
+        request = service.files().export_media(fileId=id, mimeType=mode)
+
+        response = request.execute()
+
+        with open(path, 'wb') as f:
+            with tqdm(total=size, unit='B', unit_scale=True, unit_divisor=1024, ncols=80) as pbar:
+                f.write(response)
+                pbar.update(len(response))
+
+
+    print(f'Download complete: {path}')

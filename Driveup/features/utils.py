@@ -46,7 +46,7 @@ def url_to_id(folder_id):
     #     return folder_id
     return folder_id[-33:]
        
-def convert(file_metadata,extension=None):
+def convert(file_metadata,extension):
     permited_general_extensions = ['txt',
                                     'doc',
                                     'odt',
@@ -58,22 +58,20 @@ def convert(file_metadata,extension=None):
                                     'fods',
                                     'pptx']
         
-    if extension == 'docx':
+    if extension in ['docx','rtf']:
         file_metadata['mimeType'] = 'application/vnd.google-apps.document'
-    elif extension == 'rtf':
-        file_metadata['mimeType'] = 'application/vnd.google-apps.document'
-    elif extension == 'md':
+    elif extension in ['md','odf']:
         file_metadata['mimeType'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    elif extension == 'odf':
-        file_metadata['mimeType'] = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        file_metadata['name'] = file_metadata['name'] + '.' + extension
     elif extension == 'slk':
         file_metadata['mimeType'] = 'application/vnd.google-apps.spreadsheet'
     elif extension == 'prn':
         file_metadata['mimeType'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        file_metadata['name'] = file_metadata['name'] + '.' + extension
     elif extension in permited_general_extensions :
         file_metadata['mimeType'] = 'application/vnd.google-apps.' + extension
     else:
-        file_metadata = file_metadata
+        file_metadata['name'] = file_metadata['name'] + '.' + extension
 
         
     return file_metadata
