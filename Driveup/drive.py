@@ -2,8 +2,9 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 import os
 import pandas as pd
-import io
-from googleapiclient.http import MediaIoBaseDownload
+# import io
+# from googleapiclient.http import MediaIoBaseDownload
+from tqdm import tqdm
 
 
 from Driveup.features import utils,service
@@ -66,6 +67,7 @@ class Drive:
                         self.upload(file,folder_id=folder_id,file_title=file_title,file_id=id,update=update,convert=convert,url=url)
 
         else: # if single file path
+
             
             if isinstance(file_id, list): # needs a warning saying that file_id as 'list' is not intended for a single path
                 # print ('warning')
@@ -81,29 +83,42 @@ class Drive:
             if file_title == None:
                 file_title = utils.get_filename(file_path)
 
+            pbar = tqdm(total=100, unit='B')
+
+            pbar.update(10)
+
             drive_service = self.drive_service
+            # # possible refactor
+            # if update == True:
+            #     file_metadata = service.get_update(file_title,file_id,folder_id,drive_service,self.mode)
+            
+            # Fill metadata for file creation
+            file_metadata = {}
+            file_metadata['name'] = file_title
+            file_metadata['parents'] = folder_id if self.mode == 'service' else [folder_id]
+            if file_id != None:
+                file_metadata['id'] = file_id
 
-            file_metadata = None
+            # if self.mode == 'client':
+            #     file_metadata = {'name': file_title,'parents': [folder_id]}
+            # else:
+            #     file_metadata = {'name': file_title,'parents': folder_id}
 
+            file_extension = utils.get_file_extension(file_path)
 
-            # possible refactor
-            if update == True:
-                file_metadata = service.get_update(file_title,file_id,folder_id,drive_service,self.mode)
-                    
-            if file_metadata == None: # Doesn't exist in the folder already or update=False (duplicating file)
-                if self.mode == 'client':
-                    file_metadata = {'name': file_title,'parents': [folder_id]}
-                else:
-                    file_metadata = {'name': file_title,'parents': folder_id}
+            if convert == True:
+                file_metadata = utils.convert(file_metadata,file_extension)
+            else:
+                file_metadata['name'] += f'.{file_extension}' if file_extension != "" else file_metadata['name']
 
-                file_extension = utils.get_file_extension(file_path)
+            duplicate_check, file_metadata = service.find_duplicate(file_metadata,drive_service)
 
-                if convert == True:
-                    file_metadata = utils.convert(file_metadata,file_extension)
-                else:
-                    file_metadata['name'] += f'.{file_extension}' if file_extension != "" else file_metadata['name']
+            pbar.update(40)
 
-                
+            if duplicate_check:
+                file_id = file_metadata['id']
+                gfile = self.update(file_path,file_id)
+            else: 
                 media = MediaFileUpload(file_path, resumable=True)
                 gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id',supportsAllDrives=True).execute()
 
@@ -113,9 +128,7 @@ class Drive:
 
                     drive_service.files().update(fileId=file_id,removeParents=old_parents,addParents=folder_id,supportsAllDrives=True).execute()
 
-            else: # File already exists: update
-                file_id = file_metadata['id']
-                gfile = self.update(file_path,file_id)
+            pbar.update(50)
 
                 
     def update(self,file_path: str,file_id: str):
@@ -185,7 +198,7 @@ class Drive:
             sheets_service.spreadsheets().values().clear(spreadsheetId=id,range=sheet_name, body={}).execute()
             sheets_service.spreadsheets().values().batchUpdate(spreadsheetId=id, body=requests).execute()
 
-    def upload_folder(self,local_folder_path :str,folder_id :str,update : bool =True,subfolder : bool=False,subfolder_name:str=None,recursive: bool=True,convert: bool=False,url: bool=True):
+    def upload_folder(self,local_folder_path :str,folder_id :str,update : bool =True,subfolder : bool=False,subfolder_name:str=None,recursive: bool=True,convert: bool=False,url: bool=True,total_files_to_upload_count=None,pbar=None):
         """Upload entire local folder to a specified drive folder by ID.
 
         Takes all the content of a local folder and uploads it with the same structure to 
@@ -205,6 +218,12 @@ class Drive:
             
         """
 
+        if  total_files_to_upload_count == None and pbar == None:
+            print('\n> Calculating estimated files number...')
+            total_files_to_upload_count = sum(len(filenames) for _, _, filenames in os.walk(local_folder_path))
+            print(f'Started uploading folder with {total_files_to_upload_count} files\n')
+            pbar = tqdm(total = total_files_to_upload_count,desc='Total upload progress: ')
+
         if url == True:
             folder_id = utils.url_to_id(folder_id)
 
@@ -221,11 +240,18 @@ class Drive:
             file_path = str(local_folder_path)+ '/' + file
             if recursive == True:
                 if os.path.isfile(file_path):
-                    self.upload(file_path,folder_id,update=update,convert=convert,url=False) # url=False -> not checking everytime
+                    # uploaded_files_counter += 1
+                    # print(f"\n\nUploading folder's files : {uploaded_files_counter}/{total_files_to_upload_count}")
+                    try:
+                        self.upload(file_path,folder_id,update=update,convert=convert,url=False) # url=False -> not checking everytime
+                    except Exception as e:
+                        print(f"Error uploading file: {file_path}\nERROR: {e}")
+                    pbar.update(1)
+
                 elif os.path.isdir(file_path):
                     subfolder_name = utils.get_filename(file_path)
                     subfolder_id = service.create_subfolder(subfolder_name,None,folder_id,update,self.drive_service,self.mode)
-                    self.upload_folder(file_path,subfolder_id,update=update,subfolder=False,convert=convert)
+                    self.upload_folder(file_path,subfolder_id,update=update,subfolder=False,convert=convert,total_files_to_upload_count=total_files_to_upload_count,pbar=pbar)
                 else:
                     # not file nor dir
                     print('\nError uploading file: ' + file_path + '\n(Not file or directory)')
@@ -264,13 +290,12 @@ class Drive:
             
         else:
             try:
-                print(file_metadata)
                 service.drive_download(id,path,self.drive_service,mode=export_type)
 
             except Exception as e:
                 print(f"Error downloading file: {path}\nERROR: {e}")
     
-    def download_folder(self, local_folder_path :str,folder_id :str,subfolder = False, recursive :bool = True, url :bool = True, files_counter = None, downloaded_files_counter = 0):
+    def download_folder(self, local_folder_path :str,folder_id :str,subfolder = False, recursive :bool = True, url :bool = True, files_counter = None, downloaded_files_counter = 0,pbar = None):
 
         if url == True:
             folder_id = utils.url_to_id(folder_id)
@@ -284,7 +309,16 @@ class Drive:
 
         files_list = service.list_files(folder_id,service=self.drive_service)
 
+        if files_counter == None and pbar == None:
+            # print('\n> Calculating estimated files number...')
+            # recursive_counter = service.files_counter_drive(folder_id,self.drive_service)
+            # print(f'Started downloading folder with {recursive_counter} files\n')
+            # pbar = tqdm(total = recursive_counter,desc='Total download progress: ')
+            pbar = tqdm(total=0,desc='Total download progress: ')
+
         files_counter = files_counter + (len(files_list)) if files_counter != None else len(files_list)
+
+        pbar.total = files_counter
  
         for file in files_list:
             file_metadata = service.get_full_metadata(file['id'],self.drive_service)
@@ -300,15 +334,16 @@ class Drive:
                 else:
                     subfolder_name = local_folder_path
 
-                subfolder_file_count,downloaded_subfiles_counter = self.download_folder(subfolder_name,file['id'],recursive=recursive,url=url,files_counter=files_counter,downloaded_files_counter=downloaded_files_counter)
+                subfolder_file_count,downloaded_subfiles_counter = self.download_folder(subfolder_name,file['id'],recursive=recursive,url=url,files_counter=files_counter,downloaded_files_counter=downloaded_files_counter,pbar=pbar)
                 files_counter = subfolder_file_count
                 downloaded_files_counter = downloaded_subfiles_counter
 
             else:
                 downloaded_files_counter +=1
-                print(f"Downloading folder's files : {downloaded_files_counter}/{files_counter}")
+                # print(f"Downloading folder's files : {downloaded_files_counter}/{files_counter}")
                 file_path = local_folder_path + '\\' + file_metadata['name']
                 self.download(file['id'],file_path)
+                pbar.update(1)
 
         return files_counter,downloaded_files_counter
     

@@ -14,27 +14,6 @@ def get_file_extension(path):
     extension = extension.replace(".", "")
 
     return extension
-
-def find_duplicate(list,name = None,file_id = None):
-    if name == None and file_id == None:
-        # needs to control error
-        pass
-    elif name != None: # name mode
-
-        for file in list:
-            if file['name'] == name:
-                file_id = file['id']
-            
-        return file_id
-       
-    elif file_id != None: # id mode
-
-        condition = False
-        for file in list:
-            if file['id'] == file_id:
-                condition = True
-            
-        return condition
     
 # Transforms drive folder's URL to id. Returns ID if entry is not URL
 def url_to_id(folder_id):

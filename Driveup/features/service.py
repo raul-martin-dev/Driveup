@@ -3,41 +3,86 @@ from tqdm import tqdm
 import io
 from googleapiclient.http import MediaIoBaseDownload
 
-def get_update(name,file_id,folder_id,service,mode):
-    """
-    Creates metadata for updating / uploading drive file (whether it exists or not).
+# def find_duplicate(list,name = None,file_id = None):
+#     if name == None and file_id == None:
+#         # needs to control error
+#         pass
+#     elif name != None: # name mode
 
-    If file_id is specified, it will be used to retrieve the file metadata.
-    If file_id is not specified, the function will search for a duplicate file
-    (file with the same name) and overwrite it.
+#         for file in list:
+#             if file['name'] == name:
+#                 file_id = file['id']
+            
+#         return file_id
+       
+#     elif file_id != None: # id mode
 
-    Args:
-        name: The name of the file.
-        file_id: The file ID.
-        folder_id: The folder ID.
-        service: The Google Drive service.
-        mode: The mode (client / service).
+#         condition = False
+#         for file in list:
+#             if file['id'] == file_id:
+#                 condition = True
+            
+#         return condition
 
-    Returns:
-        file_metadata: The file metadata.
-    """
-    if file_id != None:
-            if mode == 'client':
-                file_metadata = {'id':file_id,'name': name,'parents': [folder_id]}
-            else:
-                file_metadata = {'id':file_id,'name': name,'parents': folder_id}
+def find_duplicate(file_metadata,service):
 
+    files_list = list_files(file_metadata['parents'],service)
+
+    files_by_id = {file['id']: file for file in files_list}
+    files_by_name = {file['name']: file for file in files_list}
+
+    target_file = file_metadata.get('id',False)
+    target_file = files_by_id.get(file_metadata['id']) if target_file else target_file
+
+    # Search first by id if it exists
+    if target_file:
+        file_metadata.update(target_file)
+        return True,file_metadata
+    # Search then by name
     else:
-        file_id = utils.find_duplicate(list_files(folder_id,service),name = name)
-        if file_id != None:
-            if mode == 'client':
-                file_metadata = {'id':file_id,'name': name,'parents': [folder_id]}
-            else:
-                file_metadata = {'id':file_id,'name': name,'parents': folder_id}
+        target_file = files_by_name.get(file_metadata['name'])
+        if target_file:
+            file_metadata.update(target_file)
+            return True,file_metadata
         else:
-            file_metadata = None
+            return False,file_metadata
 
-    return file_metadata
+
+# def get_update(name,file_id,folder_id,service,mode):
+#     """
+#     Creates metadata for updating / uploading drive file (whether it exists or not).
+
+#     If file_id is specified, it will be used to retrieve the file metadata.
+#     If file_id is not specified, the function will search for a duplicate file
+#     (file with the same name) and overwrite it.
+
+#     Args:
+#         name: The name of the file.
+#         file_id: The file ID.
+#         folder_id: The folder ID.
+#         service: The Google Drive service.
+#         mode: The mode (client / service).
+
+#     Returns:
+#         file_metadata: The file metadata.
+#     """
+#     if file_id != None:
+#             if mode == 'client':
+#                 file_metadata = {'id':file_id,'name': name,'parents': [folder_id]}
+#             else:
+#                 file_metadata = {'id':file_id,'name': name,'parents': folder_id}
+
+#     else:
+#         file_id = utils.find_duplicate(list_files(folder_id,service),name = name)
+#         if file_id != None:
+#             if mode == 'client':
+#                 file_metadata = {'id':file_id,'name': name,'parents': [folder_id]}
+#             else:
+#                 file_metadata = {'id':file_id,'name': name,'parents': folder_id}
+#         else:
+#             file_metadata = None
+
+#     return file_metadata
     
 def list_files(folder_id,service):
     """
@@ -54,6 +99,21 @@ def list_files(folder_id,service):
     files = results.get('files', [])
         
     return files
+
+def files_counter_drive(folder_id,service,count = None):
+    count = 0 if count == None else count
+
+    files_list = list_files(folder_id,service)
+
+    for file in files_list:
+        file_metadata = get_full_metadata(file['id'],service)
+
+        if file_metadata['mimeType'] == 'application/vnd.google-apps.folder':
+            count += files_counter_drive(file_metadata['id'], service, count)
+        else:
+            count += 1
+    
+    return count
 
 def get_full_metadata(file_id,service):
     """
@@ -90,46 +150,69 @@ def create_subfolder(subfolder_name,subfolder_id,parent_folder_id,update,service
     Returns:
         subfolder_id: The ID of the subfolder.
     """
-    subfolder = None
+    # Fill metadata for file creation
+    subfolder_metadata = {}
+    subfolder_metadata['name'] = subfolder_name
+    if subfolder_id != None:
+        subfolder_metadata['id'] = subfolder_id
+    subfolder_metadata['parents'] = parent_folder_id
+    subfolder_metadata['mimeType'] = 'application/vnd.google-apps.folder'
 
-    if update == True:
-        subfolder = get_update(subfolder_name,subfolder_id,parent_folder_id,service,mode)
+    # subfolder = None
+
+    # if update == True:
+    #     subfolder = get_update(subfolder_name,subfolder_id,parent_folder_id,service,mode)
         
-    subfolder_metadata = {'name': subfolder_name, 'mimeType': 'application/vnd.google-apps.folder', 'parents': [parent_folder_id]}
+    # subfolder_metadata = {'name': subfolder_name, 'mimeType': 'application/vnd.google-apps.folder', 'parents': [parent_folder_id]}
 
-    if subfolder == None:
-        subfolder = service.files().create(body=subfolder_metadata, fields='id',supportsAllDrives=True).execute()
-    else:
-        subfolder['mimeType'] = subfolder_metadata['mimeType']
+    duplicate_check, subfolder_metadata = find_duplicate(subfolder_metadata,service)
 
-    return subfolder['id']
+    if duplicate_check == False:
+        subfolder_metadata['parents'] = [subfolder_metadata['parents']]
+        subfolder_new_metadata = service.files().create(body=subfolder_metadata, fields='id',supportsAllDrives=True).execute()
+        subfolder_metadata.update(subfolder_new_metadata)
+        if mode == 'service':
+            old_parents = subfolder_metadata.get('parents')
+            file_id = subfolder_metadata.get('id')
+
+            subfolder_metadata = service.files().update(fileId=file_id,removeParents=old_parents,addParents=old_parents,supportsAllDrives=True).execute()
+
+    return subfolder_metadata['id']
+
+    # if subfolder == None:
+    #     subfolder = service.files().create(body=subfolder_metadata, fields='id',supportsAllDrives=True).execute()
+    # else:
+    #     subfolder['mimeType'] = subfolder_metadata['mimeType']
+
+    # return subfolder['id']
     
 def drive_download(id,path,service ,mode):
 
     # Unable to get real size of the file (without duplicating API calls)
     size = 0
 
-    if mode == 'binary':
-        request = service.files().get_media(fileId=id)
+    pbar = tqdm(total = 100)
 
+    if mode == 'binary':
+        pbar.update(10)
+        request = service.files().get_media(fileId=id)
+        pbar.update(20)
         fh = io.FileIO(path, 'wb')
 
         downloader = MediaIoBaseDownload(fh, request)
 
-        with tqdm(total=size, unit='B', unit_scale=True, unit_divisor=1024, ncols=80) as pbar:
-            done = False
-            while not done:
-                status, done = downloader.next_chunk()
-                pbar.update(status.resumable_progress - pbar.n)
-    else:
-        request = service.files().export_media(fileId=id, mimeType=mode)
+        done = False
+        while not done:
+            status, done = downloader.next_chunk()
+        pbar.update(70)
 
+    else:
+        pbar.update(10)
+        request = service.files().export_media(fileId=id, mimeType=mode)
+        pbar.update(20)
         response = request.execute()
+        pbar.update(10)
 
         with open(path, 'wb') as f:
-            with tqdm(total=size, unit='B', unit_scale=True, unit_divisor=1024, ncols=80) as pbar:
-                f.write(response)
-                pbar.update(len(response))
-
-
-    print(f'Download complete: {path}')
+            f.write(response)
+        pbar.update(60)
