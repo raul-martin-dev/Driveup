@@ -148,7 +148,7 @@ class TestDrive(unittest.TestCase):
 
         drive_obj = Drive(creds)
 
-        drive_obj.upload_folder(DOWNLOAD_FOLDER_PATH,'1Qq__pF7GrOdf9LyTLWCELIk6OrYwwVe9',subfolder=False,convert=True)
+        drive_obj.upload_folder(DOWNLOAD_FOLDER_PATH,'1Qq__pF7GrOdf9LyTLWCELIk6OrYwwVe9',convert=True)
 
         
 

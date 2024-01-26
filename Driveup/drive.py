@@ -88,21 +88,12 @@ class Drive:
             pbar.update(10)
 
             drive_service = self.drive_service
-            # # possible refactor
-            # if update == True:
-            #     file_metadata = service.get_update(file_title,file_id,folder_id,drive_service,self.mode)
-            
-            # Fill metadata for file creation
+
             file_metadata = {}
             file_metadata['name'] = file_title
             file_metadata['parents'] = folder_id if self.mode == 'service' else [folder_id]
             if file_id != None:
                 file_metadata['id'] = file_id
-
-            # if self.mode == 'client':
-            #     file_metadata = {'name': file_title,'parents': [folder_id]}
-            # else:
-            #     file_metadata = {'name': file_title,'parents': folder_id}
 
             file_extension = utils.get_file_extension(file_path)
 
@@ -115,10 +106,12 @@ class Drive:
 
             pbar.update(40)
 
-            if duplicate_check:
+            if duplicate_check and update == True:
                 file_id = file_metadata['id']
                 gfile = self.update(file_path,file_id)
-            else: 
+            else:
+                if update == False:
+                    del file_metadata['id'] 
                 media = MediaFileUpload(file_path, resumable=True)
                 gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id',supportsAllDrives=True).execute()
 
@@ -243,7 +236,7 @@ class Drive:
                     # uploaded_files_counter += 1
                     # print(f"\n\nUploading folder's files : {uploaded_files_counter}/{total_files_to_upload_count}")
                     try:
-                        self.upload(file_path,folder_id,update=update,convert=convert,url=False) # url=False -> not checking everytime
+                        self.upload(file_path,folder_id,convert=convert,url=False) # url=False -> not checking everytime
                     except Exception as e:
                         print(f"Error uploading file: {file_path}\nERROR: {e}")
                     pbar.update(1)

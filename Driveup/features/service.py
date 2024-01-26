@@ -165,7 +165,11 @@ def create_subfolder(subfolder_name,subfolder_id,parent_folder_id,update,service
         
     # subfolder_metadata = {'name': subfolder_name, 'mimeType': 'application/vnd.google-apps.folder', 'parents': [parent_folder_id]}
 
-    duplicate_check, subfolder_metadata = find_duplicate(subfolder_metadata,service)
+    if update == True:
+        duplicate_check, subfolder_metadata = find_duplicate(subfolder_metadata,service)
+    else:
+        duplicate_check = False
+        subfolder_metadata.pop('id',None)
 
     if duplicate_check == False:
         subfolder_metadata['parents'] = [subfolder_metadata['parents']]
@@ -176,7 +180,7 @@ def create_subfolder(subfolder_name,subfolder_id,parent_folder_id,update,service
             file_id = subfolder_metadata.get('id')
 
             subfolder_metadata = service.files().update(fileId=file_id,removeParents=old_parents,addParents=old_parents,supportsAllDrives=True).execute()
-
+    print(subfolder_metadata)
     return subfolder_metadata['id']
 
     # if subfolder == None:
