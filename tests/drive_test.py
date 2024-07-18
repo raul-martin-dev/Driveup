@@ -150,7 +150,26 @@ class TestDrive(unittest.TestCase):
 
         drive_obj.upload_folder(DOWNLOAD_FOLDER_PATH,'1Qq__pF7GrOdf9LyTLWCELIk6OrYwwVe9',convert=True)
 
-        
+    def test_upload_1(self):
+        creds = authorize(SERVICE_SECRET_PATH)
+
+        drive_obj = Drive(creds)
+
+        drive_obj.upload(UPLOAD_FILE_PATH_2,"13RvhBT9tfRSW3q3xA6j3eBwZ8rfDfMvi")
+
+    def test_upload_with_info_auth(self):
+
+        info = {
+        # SECRET_DICT
+        }   
+
+        creds = authorize(info)
+
+        drive_obj = Drive(creds)
+
+        drive_obj.upload(UPLOAD_FILE_PATH_1,"13RvhBT9tfRSW3q3xA6j3eBwZ8rfDfMvi")
+
+     
 
 
     
