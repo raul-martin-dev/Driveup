@@ -14,12 +14,15 @@ from typing import overload,Union,List, Optional
 def col_idx_to_a1(col_idx: int) -> str:
     """Converts a 0-indexed column number into an A1 notation letter (e.g., 0 -> A, 26 -> AA)."""
     if col_idx < 0:
-        raise ValueError("Column index must be non-negative.")
+        # This case should ideally be prevented by ensuring num_cols >= 1 before calling
+        raise ValueError("Column index must be non-negative for A1 notation.")
     letters = ""
-    while col_idx >= 0:
-        letters = string.ascii_uppercase[col_idx % 26] + letters
-        col_idx = col_idx // 26 - 1
-    return letters
+    # Handle 0-indexed to 1-indexed for typical algorithm
+    idx = col_idx
+    while idx >= 0:
+        letters = string.ascii_uppercase[idx % 26] + letters
+        idx = idx // 26 - 1
+    return letters if letters else "A" # Should not be empty if col_idx >=0
 
 class Drive:
     """Contains DriveUp main methods and have full access to both drive and sheets API.
@@ -54,15 +57,17 @@ class Drive:
 
     def _resize_sheet(self, spreadsheet_id: str, sheet_id: int, rows: int, cols: int):
         """Resizes the given sheet to specified rows and columns."""
-        print(f"Resizing sheet ID {sheet_id} to {rows} rows and {cols} columns.")
+        effective_rows = max(1, rows)
+        effective_cols = max(1, cols)
+        print(f"Resizing sheet ID {sheet_id} to {effective_rows} rows and {effective_cols} columns.")
         requests = [
             {
                 "updateSheetProperties": {
                     "properties": {
                         "sheetId": sheet_id,
                         "gridProperties": {
-                            "rowCount": max(1, rows), # Sheet must have at least 1 row/col
-                            "columnCount": max(1, cols)
+                            "rowCount": effective_rows,
+                            "columnCount": effective_cols
                         }
                     },
                     "fields": "gridProperties(rowCount,columnCount)"
@@ -77,7 +82,8 @@ class Drive:
             print(f"Sheet ID {sheet_id} resized successfully.")
         except Exception as e:
             print(f"Error resizing sheet ID {sheet_id}: {e}")
-            raise # Re-raise for handling in the calling function
+            raise e
+
 
     @overload
     def upload(self,file_path:list,folder_id:Union[str, List[str]],file_title:str=None,file_id:Union[str, List[str]]=None,update:bool=True,convert:bool=False,url:bool=True):
@@ -197,236 +203,219 @@ class Drive:
     
     def df_update(self,
                   df: Union[pd.DataFrame, List[pd.DataFrame]],
-                  spreadsheet_id: str, # Renamed 'id' to 'spreadsheet_id' for clarity
+                  spreadsheet_id: str,
                   sheet_name: str = None,
                   unformat: bool = False,
-                  chunk_size: int = 5000):
+                  chunk_size: int = 2000,
+                  reset_sheet_structure: bool = True):
         """Update content of a drive sheet with a pandas dataframe.
 
-        This method clears the target sheet, resizes it, then uploads the DataFrame in chunks.
-
         Args:
-            df: Dataframe, or list of them, which information will be used to update drive sheets.
-            spreadsheet_id: ID of the Google Spreadsheet that will be updated.
-            sheet_name: Name of the sheet that will be updated. If None, first sheet is used.
-            unformat: If True, clean df format (NaN to 'NULL', all to string).
-            chunk_size: Number of rows to upload per chunk for large dataframes.
+            df: DataFrame or list of DataFrames.
+            spreadsheet_id: ID of the Google Spreadsheet.
+            sheet_name: Name of the sheet. Defaults to the first sheet.
+            unformat: If True, fill NaN with 'NULL' and convert all to string.
+            chunk_size: Rows per chunk for large DataFrames.
+            reset_sheet_structure: If True, the sheet's structure (dimensions and formats)
+                                   will be completely reset to fit the new DataFrame, some
+                                   calculated columns or aditional formats could be lost.
+                                   If False (default), existing formats and dimensions are
+                                   preserved, and the sheet is only expanded if necessary.
         """
         sheets_service = self.sheets_service
-        try:
-            # Get all sheet properties once to find the target or default sheet
-            file_metadata = sheets_service.spreadsheets().get(
-                spreadsheetId=spreadsheet_id, fields="sheets(properties(sheetId,title,gridProperties))"
-            ).execute()
-        except Exception as e:
-            print(f"Error fetching spreadsheet metadata for ID {spreadsheet_id}: {e}")
-            return
 
-        all_sheet_props = file_metadata.get('sheets', [])
-
+        # Handle list of DataFrames by recursively calling this method
         if isinstance(df, list):
-            if len(df) > len(all_sheet_props):
-                print(f"Warning: More DataFrames ({len(df)}) provided than sheets ({len(all_sheet_props)}) in the spreadsheet. Extra DataFrames will be ignored.")
+            # Get all sheet names once for list processing
+            try:
+                file_metadata_for_list = sheets_service.spreadsheets().get(
+                    spreadsheetId=spreadsheet_id, fields="sheets(properties(title))"
+                ).execute()
+                available_sheets = file_metadata_for_list.get('sheets', [])
+            except Exception as e:
+                print(f"Error fetching sheet list for multi-DF update: {e}")
+                return
+
+            if len(df) > len(available_sheets):
+                print(f"Warning: {len(df)} DFs provided, but only {len(available_sheets)} sheets exist. Extra DFs ignored.")
 
             for i, single_df in enumerate(df):
-                if i < len(all_sheet_props):
-                    current_sheet_props = all_sheet_props[i].get("properties", {})
-                    current_sheet_name_from_props = current_sheet_props.get("title", f"Sheet{i+1}") # Fallback name
-                    print(f"Recursively updating sheet: '{current_sheet_name_from_props}' with DataFrame at index {i}")
-                    self.df_update(single_df, spreadsheet_id, current_sheet_name_from_props,
-                                   unformat=unformat, chunk_size=chunk_size)
+                if i < len(available_sheets):
+                    current_sheet_title = available_sheets[i].get("properties", {}).get("title")
+                    if not current_sheet_title:
+                        print(f"Warning: Could not get title for sheet at index {i}. Skipping.")
+                        continue
+                    print(f"Recursively updating sheet: '{current_sheet_title}' with DataFrame at index {i}")
+                    self.df_update(single_df, spreadsheet_id, current_sheet_title,
+                                   unformat=unformat, chunk_size=chunk_size,
+                                   reset_sheet_structure=reset_sheet_structure) # Pass flag
                 else:
-                    break # Stop if we run out of sheets in the spreadsheet
-            return # Exit after processing list of DFs
+                    break
+            return
 
         # --- Single DataFrame processing ---
-        df_processed = df.copy() # Work on a copy
+        df_to_process = df.copy()
         if unformat:
-            df_processed = df_processed.fillna('NULL')
-            df_processed = df_processed.astype(str)
-            df_processed.columns = df_processed.columns.astype(str)
+            df_to_process = df_to_process.fillna('NULL')
+            df_to_process = df_to_process.astype(str)
+            if not df_to_process.columns.empty:
+                 df_to_process.columns = df_to_process.columns.astype(str)
 
-        target_sheet_props = None
-        if sheet_name:
-            for props_item in all_sheet_props:
-                if props_item.get("properties", {}).get("title") == sheet_name:
-                    target_sheet_props = props_item.get("properties")
-                    break
-            if not target_sheet_props:
-                print(f"Error: Sheet named '{sheet_name}' not found in spreadsheet {spreadsheet_id}.")
-                # Option: Create the sheet if it doesn't exist
-                # try:
-                #     add_sheet_request = {'addSheet': {'properties': {'title': sheet_name}}}
-                #     response = sheets_service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body={'requests': [add_sheet_request]}).execute()
-                #     new_sheet_props = response.get('replies')[0].get('addSheet').get('properties')
-                #     print(f"Sheet '{sheet_name}' created with ID {new_sheet_props.get('sheetId')}.")
-                #     target_sheet_props = new_sheet_props
-                # except Exception as e_create:
-                #     print(f"Failed to create sheet '{sheet_name}': {e_create}")
-                #     return
-                return # If not creating, then exit
-        elif all_sheet_props:
-            target_sheet_props = all_sheet_props[0].get("properties") # Default to first sheet
-            sheet_name = target_sheet_props.get("title")
-        else:
-            print(f"Error: No sheets found in spreadsheet {spreadsheet_id} and no sheet_name provided.")
-            # Option: Create a default sheet "Sheet1"
-            # try:
-            #     add_sheet_request = {'addSheet': {'properties': {'title': "Sheet1"}}}
-            #     response = sheets_service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body={'requests': [add_sheet_request]}).execute()
-            #     new_sheet_props = response.get('replies')[0].get('addSheet').get('properties')
-            #     print(f"Default sheet 'Sheet1' created with ID {new_sheet_props.get('sheetId')}.")
-            #     target_sheet_props = new_sheet_props
-            #     sheet_name = "Sheet1"
-            # except Exception as e_create_default:
-            #     print(f"Failed to create default sheet 'Sheet1': {e_create_default}")
-            #     return
-            return # If not creating, then exit
-
-        if not target_sheet_props or 'sheetId' not in target_sheet_props:
-            print(f"Error: Could not determine target sheet properties or sheetId for '{sheet_name}'.")
-            return
-
-        actual_sheet_name = target_sheet_props['title'] # Use the name from properties for safety
-        sheet_id_num = target_sheet_props['sheetId']
-
-        print(f"Processing sheet: '{actual_sheet_name}' (ID: {sheet_id_num}) in spreadsheet: {spreadsheet_id}")
-
-        # 1. Clear all cell values in the target sheet
-        print(f"Clearing all values from sheet: '{actual_sheet_name}'...")
-        try:
-            # Quoting sheet name is good practice for names with spaces/special chars
-            clear_range = f"'{actual_sheet_name}'"
-            sheets_service.spreadsheets().values().clear(
-                spreadsheetId=spreadsheet_id,
-                range=clear_range,
-                body={}
-            ).execute()
-            print(f"Sheet '{actual_sheet_name}' cleared.")
-        except Exception as e:
-            print(f"Error clearing sheet '{actual_sheet_name}': {e}")
-            return
-
-        # 2. Resize the sheet to a minimal size (e.g., 1x1) to remove old grid structure
-        try:
-            self._resize_sheet(spreadsheet_id, sheet_id_num, rows=1, cols=1)
-        except Exception as e:
-            print(f"Halting due to error during initial resize of '{actual_sheet_name}': {e}")
-            return
-
-        # Prepare data for upload
-        headers_list = df_processed.columns.tolist()
-        data_values = df_processed.values.tolist()
-
-        total_rows_to_write = len(data_values)
-        num_cols_to_write = len(headers_list) if headers_list else (len(data_values[0]) if data_values else 0)
-
-        if not headers_list and not data_values:
-            print(f"DataFrame is empty. Sheet '{actual_sheet_name}' remains cleared and resized to 1x1.")
-            # Optionally, resize to 0x0 if supported, or ensure it's truly empty via API
-            # However, 1x1 is typically fine.
-            return
-
-        # 3. (Optional but recommended) Pre-resize sheet to fit all new data + headers
-        # This avoids potential issues with `update` needing to expand the sheet on the fly for very large updates.
-        # Google Sheets has limits (e.g., 10M cells total per spreadsheet).
-        rows_needed = (1 if headers_list else 0) + total_rows_to_write
-        cols_needed = num_cols_to_write
+        # Determine target sheet name and get its properties (including sheetId and current dimensions)
+        if not sheet_name: # If no sheet_name, try to get the first one
+            try:
+                first_sheet_meta = sheets_service.spreadsheets().get(
+                    spreadsheetId=spreadsheet_id, fields="sheets(properties(title))" # Only need title for first sheet
+                ).execute().get('sheets', [])
+                if first_sheet_meta:
+                    sheet_name = first_sheet_meta[0].get("properties", {}).get("title")
+                else:
+                    print(f"Error: Spreadsheet {spreadsheet_id} has no sheets. Cannot determine default sheet.")
+                    return
+            except Exception as e:
+                print(f"Error getting default sheet name: {e}")
+                return
         
-        if rows_needed == 0 and cols_needed == 0: # Truly empty df, after header check
-            rows_needed = 1
-            cols_needed = 1
+        target_sheet_props = self._get_sheet_properties(spreadsheet_id, sheet_name)
+        if not target_sheet_props:
+            print(f"Error: Sheet named '{sheet_name}' not found or properties inaccessible in {spreadsheet_id}.")
+            return
+        
+        sheet_id_num = target_sheet_props['sheetId']
+        current_sheet_rows = target_sheet_props.get('gridProperties', {}).get('rowCount', 1)
+        current_sheet_cols = target_sheet_props.get('gridProperties', {}).get('columnCount', 1)
 
-        print(f"Pre-resizing sheet '{actual_sheet_name}' for {rows_needed} rows and {cols_needed} columns.")
+        print(f"Processing sheet: '{sheet_name}' (ID: {sheet_id_num}) in spreadsheet: {spreadsheet_id}")
+
+        # Prepare DataFrame data
+        headers_list = df_to_process.columns.tolist() if not df_to_process.columns.empty else []
+        data_values = df_to_process.values.tolist()
+        has_headers = bool(headers_list)
+        
+        df_num_data_rows = len(data_values)
+        df_num_cols = len(headers_list) if has_headers else (len(data_values[0]) if df_num_data_rows > 0 and data_values[0] else 0)
+        df_total_rows = (1 if has_headers else 0) + df_num_data_rows
+
+        # Effective dimensions the DataFrame requires (at least 1x1 for sheet operations)
+        df_effective_rows = max(1, df_total_rows)
+        df_effective_cols = max(1, df_num_cols)
+
+        # 1. Handle Sheet Structure (Resizing)
+        if reset_sheet_structure:
+            print(f"  Mode: Resetting sheet structure for '{sheet_name}'.")
+            try:
+                # print(f"    Initial resize to 1x1 to clear old structure...")
+                # self._resize_sheet(spreadsheet_id, sheet_id_num, rows=1, cols=1)
+                print(f"    Resizing sheet to fit new DataFrame: {df_effective_rows}x{df_effective_cols}.")
+                self._resize_sheet(spreadsheet_id, sheet_id_num, df_effective_rows, df_effective_cols)
+            except Exception as e:
+                print(f"Halting due to error during sheet structure reset of '{sheet_name}': {e}")
+                return
+        else: # Default: Preserve structure, expand if necessary
+            print(f"  Mode: Preserving existing sheet structure for '{sheet_name}'.")
+            target_rows_for_sheet = max(current_sheet_rows, df_effective_rows)
+            target_cols_for_sheet = max(current_sheet_cols, df_effective_cols)
+
+            if target_rows_for_sheet > current_sheet_rows or target_cols_for_sheet > current_sheet_cols:
+                print(f"    Expanding sheet from {current_sheet_rows}x{current_sheet_cols} to {target_rows_for_sheet}x{target_cols_for_sheet}.")
+                try:
+                    self._resize_sheet(spreadsheet_id, sheet_id_num, target_rows_for_sheet, target_cols_for_sheet)
+                except Exception as e:
+                    print(f"Halting due to error during sheet expansion of '{sheet_name}': {e}")
+                    return
+            else:
+                print(f"    Sheet is already large enough. No expansion needed.")
+
+        # 2. Clear values from the sheet
+        # Original method cleared the whole sheet. This is simple and preserves formats on cells.
+        print(f"  Clearing values from entire sheet '{sheet_name}' (preserves cell formats)...")
         try:
-            self._resize_sheet(spreadsheet_id, sheet_id_num, rows_needed, cols_needed)
+            sheets_service.spreadsheets().values().clear(
+                spreadsheetId=spreadsheet_id, range=f"'{sheet_name}'", body={}
+            ).execute()
+            print(f"  Values cleared from '{sheet_name}'.")
         except Exception as e:
-            print(f"Warning: Error during pre-resize for data, proceeding with writes: {e}")
-            # Continue, as `update` might still work by auto-expanding.
+            print(f"Error clearing values from sheet '{sheet_name}': {e}")
+            return
+        
+        # If DataFrame is empty, we're done after clearing and potential resize.
+        if df_total_rows == 0:
+            print(f"DataFrame is empty. Sheet '{sheet_name}' has been prepared and values cleared.")
+            print(f"Sheet '{sheet_name}' update complete (empty).")
+            return
 
-        current_row_gsheet = 1 # Google Sheets is 1-indexed
+        # 3. Upload data (headers and values)
+        all_values_to_upload = []
+        if has_headers:
+            all_values_to_upload.append(headers_list)
+        all_values_to_upload.extend(data_values)
 
-        # 4. Write Headers
-        if headers_list:
-            if num_cols_to_write == 0: # Should not happen if headers_list is non-empty
-                 print("Error: Headers list exists but num_cols_to_write is 0. This is a bug.")
-                 return
-            end_col_letter_header = col_idx_to_a1(num_cols_to_write - 1)
-            header_range = f"'{actual_sheet_name}'!A{current_row_gsheet}:{end_col_letter_header}{current_row_gsheet}"
-            print(f"Writing headers to {header_range}...")
+        # Use 'USER_ENTERED' to allow existing cell formats to apply to new data
+        value_input_option = 'USER_ENTERED'
+        
+        # Determine end column letter for the actual DataFrame content
+        # df_num_cols is 0 if df is empty or has no columns
+        end_col_letter_df = col_idx_to_a1(df_num_cols - 1) if df_num_cols > 0 else "A"
+
+        if df_total_rows <= chunk_size: # Small enough for a single update call
+            upload_range = f"'{sheet_name}'!A1:{end_col_letter_df}{df_total_rows}"
+            print(f"  Uploading {df_total_rows} rows in a single operation to {upload_range}...")
             try:
                 sheets_service.spreadsheets().values().update(
                     spreadsheetId=spreadsheet_id,
-                    range=header_range,
-                    valueInputOption='USER_ENTERED',
-                    body={'values': [headers_list]}
+                    range=upload_range, # Write to A1 extending to DF's actual size
+                    valueInputOption=value_input_option,
+                    body={'values': all_values_to_upload}
                 ).execute()
-                print("Headers written.")
-                current_row_gsheet += 1
+                print("  Data written successfully.")
             except Exception as e:
-                print(f"Error writing headers to '{actual_sheet_name}': {e}")
+                print(f"Error writing data in single operation to {upload_range}: {e}")
                 return
-        else:
-            print(f"No headers to write for sheet '{actual_sheet_name}'.")
+        else: # Chunking required
+            print(f"  Uploading {df_total_rows} rows in chunks of {chunk_size}...")
+            current_gdrive_row = 1 # 1-indexed for Sheets A1 notation
 
-        # 5. Write Data in Chunks using update
-        if data_values:
-            if num_cols_to_write == 0: # If no headers, infer from first data row
-                num_cols_to_write = len(data_values[0]) if data_values else 0
-                if num_cols_to_write == 0:
-                    print("No data columns to write.") # No data and no headers with columns
-                    # If we only had headers, sheet is already sized. If no headers, 1x1.
-                    return 
+            # Write headers first
+            if has_headers:
+                header_range = f"'{sheet_name}'!A{current_gdrive_row}:{end_col_letter_df}{current_gdrive_row}"
+                print(f"    Writing headers to {header_range}...")
+                try:
+                    sheets_service.spreadsheets().values().update(
+                        spreadsheetId=spreadsheet_id,
+                        range=header_range,
+                        valueInputOption=value_input_option,
+                        body={'values': [headers_list]}
+                    ).execute()
+                    current_gdrive_row += 1
+                except Exception as e:
+                    print(f"Error writing headers to {header_range}: {e}")
+                    return
             
-            end_col_letter_data = col_idx_to_a1(num_cols_to_write - 1)
+            # Write data values in chunks
+            print(f"    Writing {df_num_data_rows} data rows in chunks...")
+            for i in range(0, df_num_data_rows, chunk_size):
+                chunk = data_values[i:i + chunk_size]
+                if not chunk: continue
 
-            print(f"Writing {total_rows_to_write} data rows in chunks of {chunk_size} to '{actual_sheet_name}'...")
-            for i in range(0, total_rows_to_write, chunk_size):
-                chunk_data = data_values[i:i + chunk_size]
-                if not chunk_data: continue
-
-                start_row_for_chunk = current_row_gsheet
-                end_row_for_chunk = current_row_gsheet + len(chunk_data) - 1
+                start_row_for_chunk_in_sheet = current_gdrive_row
+                end_row_for_chunk_in_sheet = current_gdrive_row + len(chunk) - 1
+                chunk_range = f"'{sheet_name}'!A{start_row_for_chunk_in_sheet}:{end_col_letter_df}{end_row_for_chunk_in_sheet}"
                 
-                chunk_range = f"'{actual_sheet_name}'!A{start_row_for_chunk}:{end_col_letter_data}{end_row_for_chunk}"
-                
-                print(f"  Writing chunk to {chunk_range} (DF rows {i+1} to {min(i + chunk_size, total_rows_to_write)})")
+                print(f"      Writing chunk to {chunk_range} (DF data rows {i+1} to {min(i+chunk_size, df_num_data_rows)})")
                 try:
                     sheets_service.spreadsheets().values().update(
                         spreadsheetId=spreadsheet_id,
                         range=chunk_range,
-                        valueInputOption='USER_ENTERED',
-                        body={'values': chunk_data}
+                        valueInputOption=value_input_option,
+                        body={'values': chunk}
                     ).execute()
-                    current_row_gsheet += len(chunk_data)
-                    # time.sleep(0.1) # Small delay, if needed for API rate limits
+                    current_gdrive_row += len(chunk)
                 except Exception as e:
-                    print(f"Error writing chunk to {chunk_range}: {e}")
-                    # Implement retry or error aggregation if needed
-                    return # Stop on error for now
-            print(f"All data written to '{actual_sheet_name}'.")
-        else:
-            print(f"No data rows to write to '{actual_sheet_name}'.")
+                    print(f"Error writing data chunk to {chunk_range}: {e}")
+                    return
+            print("  All data chunks written successfully.")
 
-        # 6. (Optional) Final trim to exact size, if pre-resize was generous or no data written
-        final_rows_written = (1 if headers_list else 0) + total_rows_to_write
-        final_cols_written = num_cols_to_write
-        if final_rows_written == 0 : final_rows_written = 1 # Min 1 row
-        if final_cols_written == 0 : final_cols_written = 1 # Min 1 col
-
-        # Get current grid properties to see if trim is needed
-        # current_grid_props = self._get_sheet_properties(spreadsheet_id, actual_sheet_name).get('gridProperties', {})
-        # current_rows = current_grid_props.get('rowCount', 0)
-        # current_cols = current_grid_props.get('columnCount', 0)
-        # if current_rows != final_rows_written or current_cols != final_cols_written:
-
-        print(f"Performing final size adjustment of '{actual_sheet_name}' to {final_rows_written} rows and {final_cols_written} columns.")
-        try:
-            self._resize_sheet(spreadsheet_id, sheet_id_num, final_rows_written, final_cols_written)
-        except Exception as e:
-            print(f"Warning: Error during final trim of '{actual_sheet_name}': {e}")
-
-        print(f"Sheet '{actual_sheet_name}' update complete.")
+        print(f"Sheet '{sheet_name}' update complete.")
 
     def upload_folder(self,local_folder_path :str,folder_id :str,update : bool =True,subfolder : bool=False,subfolder_name:str=None,recursive: bool=True,convert: bool=False,url: bool=True,total_files_to_upload_count=None,pbar=None):
         """Upload entire local folder to a specified drive folder by ID.
