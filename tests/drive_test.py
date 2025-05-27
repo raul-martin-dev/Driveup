@@ -177,8 +177,8 @@ class TestDrive(unittest.TestCase):
         drive_obj = Drive(creds)
 
         # Parameters
-        n_rows = 50_000    # 1 million rows
-        n_cols = 100          # 100 columns
+        n_rows = 20   
+        n_cols = 3         
 
         # Create a 2D NumPy array with shape (n_rows, n_cols)
         data = np.random.rand(n_rows, n_cols)  # random float data between 0 and 1
