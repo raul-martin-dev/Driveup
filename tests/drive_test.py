@@ -2,6 +2,8 @@ import unittest
 import os
 import pandas as pd
 
+import numpy as np
+
 from Driveup.drive import Drive
 from Driveup.features.auth import authorize
 
@@ -16,7 +18,7 @@ UPLOAD_FILE_PATH_2 = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles"
 UPLOAD_FOLDER_PATH = os.path.join(tests_dir,"__testsDataFiles","drive_testFiles","test_folder")
 DOWNLOAD_PATH = os.path.join(tests_dir,"__testsDataFiles","download_testFiles","file.csv")
 DOWNLOAD_FOLDER_PATH = os.path.join(tests_dir,"__testsDataFiles","download_testFiles")
-DOWNLOAD_ID = "1I3p4BQoJfP0BgL7ezL5OFd8ExMxSvTcfUm6QPZTOu2Q"
+DOWNLOAD_ID = "17K5GXNITAj2WabiKPzObzdP-63-Zsy5MTfa7huQ6sVA"
 DRIVE_FOLDER_ID = 'https://drive.google.com/drive/folders/1wXpG03SN0RXI7y1QAd03IDGH2eXFD_VS'
 
 class TestDrive(unittest.TestCase):
@@ -157,17 +159,37 @@ class TestDrive(unittest.TestCase):
 
         drive_obj.upload(UPLOAD_FILE_PATH_2,"13RvhBT9tfRSW3q3xA6j3eBwZ8rfDfMvi")
 
-    def test_upload_with_info_auth(self):
+    # def test_upload_with_info_auth(self):
 
-        info = {
-        # SECRET_DICT
-        }   
+    #     info = {
+    #     # SECRET_DICT
+    #     }   
 
-        creds = authorize(info)
+    #     creds = authorize(info)
+
+    #     drive_obj = Drive(creds)
+
+    #     drive_obj.upload(UPLOAD_FILE_PATH_1,"13RvhBT9tfRSW3q3xA6j3eBwZ8rfDfMvi")
+
+    def test_df_update_large_df(self):
+        creds = authorize(SERVICE_SECRET_PATH)
 
         drive_obj = Drive(creds)
 
-        drive_obj.upload(UPLOAD_FILE_PATH_1,"13RvhBT9tfRSW3q3xA6j3eBwZ8rfDfMvi")
+        # Parameters
+        n_rows = 50_000    # 1 million rows
+        n_cols = 100          # 100 columns
+
+        # Create a 2D NumPy array with shape (n_rows, n_cols)
+        data = np.random.rand(n_rows, n_cols)  # random float data between 0 and 1
+
+        # Optional: generate column names
+        col_names = [f'col_{i}' for i in range(n_cols)]
+
+        # Convert to DataFrame
+        df = pd.DataFrame(data, columns=col_names)
+
+        drive_obj.df_update(df, '1gKuNpY-VGXaG1PhX-pK9QRVKb5uCfTtYk5hI0w9pXXI')
 
      
 
