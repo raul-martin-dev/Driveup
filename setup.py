@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='driveup',
-    version='0.9.8',
+    version='0.9.9',
     author='Raúl M.R.',
     author_email="raul.martin4bc@gmail.com",
     url="https://github.com/raul-martin-dev/Driveup",
@@ -15,6 +15,11 @@ setup(
     long_description_content_type="text/markdown",
     
     packages=find_packages(include=["driveup", "driveup.*"]),
+
+    include_package_data=True,
+    package_data={
+        "driveup": ["utilities/*.json"],
+    },
     
     install_requires=[
         'google-api-python-client>=2.0.0',
@@ -31,7 +36,7 @@ setup(
 
     entry_points={
         "apache_airflow_provider": [
-            "provider_info=driveup.providers.airflow.get_provider_info:get_provider_info"
+            "provider_info=driveup.providers.airflow.provider:get_provider_info"
         ]
     },
 
