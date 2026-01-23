@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='driveup',
-    version='0.9.7',
+    version='0.9.8',
     author='Raúl M.R.',
     author_email="raul.martin4bc@gmail.com",
     url="https://github.com/raul-martin-dev/Driveup",
@@ -14,7 +14,7 @@ setup(
     long_description=README_DESCRIPTION,
     long_description_content_type="text/markdown",
     
-    packages=find_packages(include=["Driveup", "Driveup.*"]),
+    packages=find_packages(include=["driveup", "driveup.*"]),
     
     install_requires=[
         'google-api-python-client>=2.0.0',
