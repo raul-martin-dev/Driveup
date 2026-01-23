@@ -42,8 +42,8 @@ Note: you might have to add this command as a “code” line in order to use Dr
 In this basic example, you can check how to use the package in order to upload an excel file to an specific folder in google drive.
 
 ```python
-from Driveup.drive import Drive
-from Driveup.features.auth import authorize
+from driveup.drive import Drive
+from driveup.features.auth import authorize
 
 EXCEL_PATH = 'C:\\Data\\Path\\sample_excel_file.xlsx'
 SECRET_PATH = 'C:\\Data\\Path\\Secret\\service_account_key.json'

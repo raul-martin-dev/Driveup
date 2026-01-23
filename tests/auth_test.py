@@ -1,7 +1,7 @@
 import unittest
 import os
 
-from Driveup.features import auth
+from driveup.features import auth
 
 tests_dir = os.path.dirname(os.path.abspath(__file__)) # Driveup/tests/
 

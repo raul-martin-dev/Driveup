@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='driveup',
-    version='0.9.6',
+    version='0.9.7',
     author='Raúl M.R.',
     author_email="raul.martin4bc@gmail.com",
     url="https://github.com/raul-martin-dev/Driveup",
@@ -31,7 +31,7 @@ setup(
 
     entry_points={
         "apache_airflow_provider": [
-            "provider_info=Driveup.providers.airflow.get_provider_info:get_provider_info"
+            "provider_info=driveup.providers.airflow.get_provider_info:get_provider_info"
         ]
     },
 

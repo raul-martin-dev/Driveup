@@ -1,6 +1,6 @@
 from airflow.hooks.base import BaseHook
-from Driveup.drive import Drive
-from Driveup.features.auth import authorize
+from driveup.drive import Drive
+from driveup.features.auth import authorize
 
 
 class DriveUpHook(BaseHook):
@@ -14,6 +14,9 @@ class DriveUpHook(BaseHook):
         self.driveup_conn_id = driveup_conn_id
 
     def get_conn(self):
+        """
+        Retrieves the connection from Airflow and validates the JSON extra field.
+        """
         conn = self.get_connection(self.driveup_conn_id)
         
         if not conn.extra:
@@ -30,5 +33,20 @@ class DriveUpHook(BaseHook):
     def drive(self) -> Drive:
         config = self.get_conn()
         credentials = authorize(config)
-        drive_instance = Drive(credentials=credentials)
-        return drive_instance
+        return Drive(credentials=credentials)
+    
+    @staticmethod
+    def get_ui_field_behaviour():
+        """
+        Customizes the Airflow Web UI Connection Form.
+        Hides Host, Schema, Login, Port. Shows Password (optional) and Extra.
+        """
+        return {
+            "hidden_fields": ["host", "schema", "login", "port"],
+            "relabeling": {
+                "extra": "DriveUp JSON Config",
+            },
+            "placeholders": {
+                "extra": '{"client_id": "...", "client_secret": "..."}',
+            },
+        }

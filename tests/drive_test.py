@@ -4,8 +4,8 @@ import pandas as pd
 
 import numpy as np
 
-from Driveup.drive import Drive
-from Driveup.features.auth import authorize
+from driveup.drive import Drive
+from driveup.features.auth import authorize
 
 
 tests_dir = os.path.dirname(os.path.abspath(__file__)) # Driveup/tests/
