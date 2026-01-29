@@ -201,6 +201,86 @@ class Drive:
 
         return gfile
     
+    def df_upload(self, 
+                  df: Union[pd.DataFrame, List[pd.DataFrame]], 
+                  folder_id: str, 
+                  file_title: str, 
+                  file_id: str = None, 
+                  sheet_name: str = None, 
+                  update: bool = True, 
+                  url: bool = True,
+                  unformat: bool = False,
+                  chunk_size: int = 2000,
+                  reset_sheet_structure: bool = True):
+        """Uploads a DataFrame (or list of DFs) to a Drive Spreadsheet.
+        
+        If a file with `file_title` exists in the folder and update=True, it updates it.
+        Otherwise, it creates a new Spreadsheet.
+
+        Args:
+            df: Pandas DataFrame or list of DataFrames.
+            folder_id: ID (or URL) of the Drive folder.
+            file_title: Name for the Spreadsheet file.
+            file_id: Optional specific ID to overwrite. If provided, folder searching is skipped.
+            sheet_name: Name of the sheet (tab) to update. If None, uses first sheet.
+            update: If True, searches for existing file to update. If False, always creates new.
+            url: If True, converts folder_id from URL to ID if necessary.
+            unformat: Passed to df_update (converts to string/NULL).
+            chunk_size: Passed to df_update.
+            reset_sheet_structure: Passed to df_update (resizes sheet to fit DF).
+        """
+    
+        if url:
+            folder_id = utils.url_to_id(folder_id)
+
+        target_spreadsheet_id = file_id
+
+        if target_spreadsheet_id is None and update:
+            query = (f"name = '{file_title}' and '{folder_id}' in parents and "
+                     f"mimeType = 'application/vnd.google-apps.spreadsheet' and trashed = false")
+            
+            try:
+                response = self.drive_service.files().list(
+                    q=query, spaces='drive', fields='files(id, name)'
+                ).execute()
+                files = response.get('files', [])
+                
+                if files:
+                    target_spreadsheet_id = files[0]['id']
+                    print(f"Found existing spreadsheet: '{file_title}' (ID: {target_spreadsheet_id}). Proceeding to update.")
+            except Exception as e:
+                print(f"Error searching for existing file: {e}")
+
+        if target_spreadsheet_id is None:
+            print(f"Creating new spreadsheet: '{file_title}' in folder {folder_id}...")
+            file_metadata = {
+                'name': file_title,
+                'mimeType': 'application/vnd.google-apps.spreadsheet',
+                'parents': [folder_id]
+            }
+            try:
+                gfile = self.drive_service.files().create(
+                    body=file_metadata, 
+                    fields='id', 
+                    supportsAllDrives=True
+                ).execute()
+                target_spreadsheet_id = gfile.get('id')
+                print(f"Spreadsheet created successfully (ID: {target_spreadsheet_id}).")
+            except Exception as e:
+                print(f"Error creating new spreadsheet: {e}")
+                return
+
+        self.df_update(
+            df=df,
+            spreadsheet_id=target_spreadsheet_id,
+            sheet_name=sheet_name,
+            unformat=unformat,
+            chunk_size=chunk_size,
+            reset_sheet_structure=reset_sheet_structure
+        )
+        
+        return target_spreadsheet_id
+    
     def df_update(self,
                   df: Union[pd.DataFrame, List[pd.DataFrame]],
                   spreadsheet_id: str,
