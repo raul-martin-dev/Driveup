@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='driveup',
-    version='0.9.11',
+    version='0.9.12',
     author='Raúl M.R.',
     author_email="raul.martin4bc@gmail.com",
     url="https://github.com/raul-martin-dev/Driveup",
@@ -26,7 +26,7 @@ setup(
         'pandas>=1.0.0',
         # 'google-auth-httplib2>=0.1.0',
         'google-auth-oauthlib>=0.8.0',
-    ]
+    ],
 
     python_requires='>3.7',
 )
