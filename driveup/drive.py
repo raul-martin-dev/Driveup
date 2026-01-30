@@ -150,12 +150,17 @@ class Drive:
             file_metadata = {}
             file_metadata['name'] = file_title
             file_metadata['parents'] = [folder_id]
-            if file_id != None:
+            duplicate_check, file_metadata = service.find_duplicate(file_metadata, drive_service)
+
+            if isinstance(file_metadata['parents'], str):
+                file_metadata['parents'] = [file_metadata['parents']]
+
+            if file_id is not None:
                 file_metadata['id'] = file_id
 
             file_extension = utils.get_file_extension(file_path)
 
-            if convert == True:
+            if convert:
                 file_metadata = utils.convert(file_metadata,file_extension)
             else:
                 file_metadata['name'] += f'.{file_extension}' if file_extension != "" else file_metadata['name']
@@ -164,11 +169,11 @@ class Drive:
 
             pbar.update(40)
 
-            if duplicate_check and update == True:
+            if duplicate_check and update:
                 file_id = file_metadata['id']
                 gfile = self.update(file_path,file_id)
             else:
-                if update == False:
+                if update:
                     del file_metadata['id'] 
                 media = MediaFileUpload(file_path, resumable=True)
                 gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id',supportsAllDrives=True).execute()
@@ -236,12 +241,15 @@ class Drive:
         file_metadata['name'] = file_title
         file_metadata['mimeType'] = 'application/vnd.google-apps.spreadsheet'
         
-        file_metadata['parents'] = [folder_id] 
+        file_metadata['parents'] = folder_id 
         
         if file_id is not None:
             file_metadata['id'] = file_id
 
         duplicate_check, file_metadata = service.find_duplicate(file_metadata, self.drive_service)
+
+        if 'parents' in file_metadata and isinstance(file_metadata['parents'], str):
+             file_metadata['parents'] = [file_metadata['parents']]
 
         target_spreadsheet_id = None
 
