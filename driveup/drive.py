@@ -178,11 +178,11 @@ class Drive:
                 media = MediaFileUpload(file_path, resumable=True)
                 gfile = drive_service.files().create(body=file_metadata, media_body=media, fields='id',supportsAllDrives=True).execute()
 
-                if self.mode == 'service':
-                    old_parents = gfile.get('parents')
-                    file_id = gfile.get('id')
+                # if self.mode == 'service':
+                #     old_parents = gfile.get('parents')
+                #     file_id = gfile.get('id')
 
-                    drive_service.files().update(fileId=file_id,removeParents=old_parents,addParents=folder_id,supportsAllDrives=True).execute()
+                #     drive_service.files().update(fileId=file_id,removeParents=old_parents,addParents=folder_id,supportsAllDrives=True).execute()
 
             pbar.update(50)
 

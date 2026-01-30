@@ -94,9 +94,13 @@ def list_files(folder_id,service):
     Returns:
         files: A list of files.
     """
-    results = service.files().list(q=f"'{folder_id}' in parents and trashed = false", fields="nextPageToken, files(id, name)",supportsAllDrives=True).execute()  
+    results = service.files().list(
+        q=f"'{folder_id}' in parents and trashed = false", 
+        fields="nextPageToken, files(id, name)",
+        supportsAllDrives=True,
+        includeItemsFromAllDrives=True 
+    ).execute()  
     files = results.get('files', [])
-        
     return files
 
 def files_counter_drive(folder_id,service,count = None):
