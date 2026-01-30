@@ -149,7 +149,7 @@ class Drive:
 
             file_metadata = {}
             file_metadata['name'] = file_title
-            file_metadata['parents'] = folder_id if self.mode == 'service' else [folder_id]
+            file_metadata['parents'] = [folder_id]
             if file_id != None:
                 file_metadata['id'] = file_id
 
@@ -236,7 +236,7 @@ class Drive:
         file_metadata['name'] = file_title
         file_metadata['mimeType'] = 'application/vnd.google-apps.spreadsheet'
         
-        file_metadata['parents'] = folder_id if self.mode == 'service' else [folder_id]
+        file_metadata['parents'] = [folder_id] 
         
         if file_id is not None:
             file_metadata['id'] = file_id
@@ -261,15 +261,6 @@ class Drive:
             ).execute()
             
             target_spreadsheet_id = gfile.get('id')
-
-            if self.mode == 'service':
-                old_parents = gfile.get('parents')
-                self.drive_service.files().update(
-                    fileId=target_spreadsheet_id,
-                    removeParents=old_parents,
-                    addParents=folder_id,
-                    supportsAllDrives=True
-                ).execute()
 
         self.df_update(
             df=df,
